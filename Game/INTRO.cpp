@@ -4,10 +4,11 @@
 #include<vector>
 #include<cstdlib>
 #include<iomanip>
+//ทำเผื่อๆ
 
-using namespace std;
+using namespace std; 
 
-int const scale = 3; // ขนาดของกระดาน(ลองเปลี่ยนได้)
+int const scale = 5; // ขนาดของกระดาน(ลองเปลี่ยนได้)
 
 class Unit{
     public:
