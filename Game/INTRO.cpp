@@ -82,6 +82,12 @@ void display(Player left, Player right){
     cout << "=================================\n";
 }
 
+string toUpperStr(string x){
+    string y = x;
+    for(unsigned i = 0; i < x.size();i++) y[i] = toupper(x[i]);
+    return y;
+}
+
 // การรับคำสั่งของผู้เล่น
 
 string toUpperStr(string x){
@@ -116,7 +122,6 @@ void action(Player &currP){
         cout << "[!] Invalid command. Write \"add\" to create a unit or \"skip\" to skip or \"End\" to to end the game.\n"; // สำหรับถ้าพิมพ์คำสั่งมาผิด
         action(currP);
     }
-    
     cout << "\n";
 }
 ///////////////////////////////////////////////ของฟิวถึงนี่
