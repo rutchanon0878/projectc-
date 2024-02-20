@@ -20,6 +20,25 @@ class Unit{
         void damaged(int);    // ลดค่า hp ของ unit
 };
 
+////////////New create//////////////////////////////ขอสไปรท์
+void importDataFromFile(const string filename,vector<string> &names,vector<int> &atk,vector<int> &hp){
+    ifstream text(filename);
+    string file;
+    char name[10];
+    int attack,health;
+    int receive;
+    while(getline(text,file)){
+        char format[] = "%[^:]: %d %d";
+        sscanf(file.c_str(),format,&name,&atk,&hp);
+        names.push_back(name);
+        atk.push_back(attack);
+        hp.push_back(health);
+    }
+    receive = rand()%9;
+
+};
+
+////////////End//////////////////////////////ของสไปรท์ถึงนี่
 void Unit::txtUpdate(){
     if(hp > 0) txt = "[" + to_string(atk) + "/" + to_string(hp) + "]"; // แสดงค่า stat ในรูปแบบ [atk/hp]
     else txt = " (x) "; // หากมีค่า hp เป็นศูนย์(unitตายหรือยังไม่ได้สร้าง) จะแสดง (x) แทน
@@ -70,6 +89,13 @@ string toUpperStr(string x){
 }
 
 // การรับคำสั่งของผู้เล่น
+
+string toUpperStr(string x){
+    string y = x;
+    for(unsigned i = 0; i < x.size();i++) y[i] = toupper(x[i]);
+    return y;
+}
+///////////////////////////////////////////ของฟิว
 void action(Player &currP){
     string input;
     int slot, attack, health;
@@ -81,18 +107,24 @@ void action(Player &currP){
     else if(toUpperStr(input) == "ADD"){
         cout << "Choose a slot(1-" << scale << "): "; // ถามว่าจะใส่ช่องไหน
         cin >> slot;
-        cout << "Enter your stat: "; // ถามว่าจะให้ stat เป็นเท่าไหร่
+        while(slot<=0 || slot>5 ){
+            cout << "[!] Invalid command.\nPlease choose a slot(1-" << scale << "): ";
+            cin >> slot;
+
+        }
+        cout << "Enter your stat: "; // ถามว่าจะให้ stat เป็นเท่าไหร่ 
         cin >> attack >> health;
         currP.slots[slot-1].create(attack, health); // Update unit ในช่องนั้นให้มีค่าตามที่ใส่
+
     }
-    else if(toUpperStr(input) == "EXIT");
+    else if(toUpperStr(input) == "EXIT") return;
     else{
-        cout << "[!] Invalid command. Write \"add\" to create a unit or \"skip\" to skip or \"Exit\" to end the game. \n"; // สำหรับถ้าพิมพ์คำสั่งมาผิด
+        cout << "[!] Invalid command. Write \"add\" to create a unit or \"skip\" to skip or \"End\" to to end the game.\n"; // สำหรับถ้าพิมพ์คำสั่งมาผิด
         action(currP);
     }
     cout << "\n";
 }
-
+///////////////////////////////////////////////ของฟิวถึงนี่
 // สั่งให้ unit ทุกช่องสู้กัน
 void combat(Player &first, Player &second){
     for(int i=0; i<scale; i++){
@@ -103,6 +135,7 @@ void combat(Player &first, Player &second){
 
 int main()
 {
+    string filename = "Namecard";
     int turn = 1;
     Player p1, p2;
     p1.name = "P1"; p2.name = "P2"; // กำหนดค่า name สำหรับเอาไว้แสดง
