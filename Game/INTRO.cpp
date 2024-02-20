@@ -63,6 +63,12 @@ void display(Player left, Player right){
     cout << "=================================\n";
 }
 
+string toUpperStr(string x){
+    string y = x;
+    for(unsigned i = 0; i < x.size();i++) y[i] = toupper(x[i]);
+    return y;
+}
+
 // การรับคำสั่งของผู้เล่น
 void action(Player &currP){
     string input;
@@ -71,19 +77,19 @@ void action(Player &currP){
     cout << "[" << currP.name << "]: ";
     cin >> input;
     
-    if(input == "skip") return;
-    else if(input == "add"){
+    if(toUpperStr(input) == "SKIP") return;
+    else if(toUpperStr(input) == "ADD"){
         cout << "Choose a slot(1-" << scale << "): "; // ถามว่าจะใส่ช่องไหน
         cin >> slot;
-        cout << "Enter your stat: "; // ถามว่าจะให้ stat เป็นเท่าไหร่ 
+        cout << "Enter your stat: "; // ถามว่าจะให้ stat เป็นเท่าไหร่
         cin >> attack >> health;
         currP.slots[slot-1].create(attack, health); // Update unit ในช่องนั้นให้มีค่าตามที่ใส่
     }
+    else if(toUpperStr(input) == "EXIT");
     else{
-        cout << "[!] Invalid command. Write \"add\" to create a unit or \"skip\" to skip.\n"; // สำหรับถ้าพิมพ์คำสั่งมาผิด
+        cout << "[!] Invalid command. Write \"add\" to create a unit or \"skip\" to skip or \"Exit\" to end the game. \n"; // สำหรับถ้าพิมพ์คำสั่งมาผิด
         action(currP);
     }
-    
     cout << "\n";
 }
 
