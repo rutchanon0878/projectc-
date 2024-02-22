@@ -26,7 +26,6 @@ void importDataFromFile(const string filename,vector<string> &names,vector<int> 
     string file;
     char name[10];
     int attack,health;
-    int receive;
     while(getline(text,file)){
         char format[] = "%[^:]: %d %d";
         sscanf(file.c_str(),format,&name,&atk,&hp);
@@ -34,7 +33,6 @@ void importDataFromFile(const string filename,vector<string> &names,vector<int> 
         atk.push_back(attack);
         hp.push_back(health);
     }
-    receive = rand()%9;
 
 };
 
@@ -81,13 +79,6 @@ void display(Player left, Player right){
     cout << "|    " << left.name << "<" << left.hp << ">            " << right.name << "<" << right.hp << ">   |\n"; // บรรทัดสำหรับแสดงค่า hp
     cout << "=================================\n";
 }
-
-string toUpperStr(string x){
-    string y = x;
-    for(unsigned i = 0; i < x.size();i++) y[i] = toupper(x[i]);
-    return y;
-}
-
 // การรับคำสั่งของผู้เล่น
 
 string toUpperStr(string x){
@@ -95,7 +86,7 @@ string toUpperStr(string x){
     for(unsigned i = 0; i < x.size();i++) y[i] = toupper(x[i]);
     return y;
 }
-///////////////////////////////////////////ของฟิว
+///////////////////////////////////////////ของฟิว//////New create////
 void action(Player &currP){
     string input;
     int slot, attack, health;
@@ -124,7 +115,7 @@ void action(Player &currP){
     }
     cout << "\n";
 }
-///////////////////////////////////////////////ของฟิวถึงนี่
+///////////////////////////////////////////////ของฟิวถึงนี่//////////////////
 // สั่งให้ unit ทุกช่องสู้กัน
 void combat(Player &first, Player &second){
     for(int i=0; i<scale; i++){
@@ -135,8 +126,12 @@ void combat(Player &first, Player &second){
 
 int main()
 {
-    string filename = "Namecard";
-    int turn = 1;
+    string filename = "Namecard.txt";
+    vector<string> names;
+    vector<int> atk,hp;
+    importDataFromFile(filename,names,atk,hp);
+    
+    int turn = 1; 
     Player p1, p2;
     p1.name = "P1"; p2.name = "P2"; // กำหนดค่า name สำหรับเอาไว้แสดง
     while(true){ 
