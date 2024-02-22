@@ -21,20 +21,35 @@ class Unit{
 };
 
 ////////////New create//////////////////////////////ขอสไปรท์
+//เหลือสร้างclassเก็บค่าที่สุ่มออกมา
+// class random{
+//         public:
+//                 int number1;
+//                 int receive;
+// };
 void importDataFromFile(const string filename,vector<string> &names,vector<int> &atk,vector<int> &hp){
     ifstream text(filename);
     string file;
     char name[10];
     int attack,health;
+    srand(time(NULL));
     while(getline(text,file)){
         char format[] = "%[^:]: %d %d";
-        sscanf(file.c_str(),format,&name,&atk,&hp);
+        sscanf(file.c_str(),format,&name,&attack,&health);
         names.push_back(name);
         atk.push_back(attack);
         hp.push_back(health);
     }
-
-};
+    int N = 1;
+    for(int i = 0;i<N ;i++){
+    int number1 = rand()%10;
+    int *num = new int(number1);
+    cout << names[number1] << "\n";
+    cout << atk[number1] << "\n";
+    cout << hp[number1] << "\n";
+    delete num;
+  }
+}
 
 ////////////End//////////////////////////////ของสไปรท์ถึงนี่
 void Unit::txtUpdate(){
@@ -128,9 +143,9 @@ int main()
 {
     string filename = "Namecard.txt";
     vector<string> names;
-    vector<int> atk,hp;
-    importDataFromFile(filename,names,atk,hp);
-    
+    vector<int> atks,hps;
+    importDataFromFile(filename,names,atks,hps);
+
     int turn = 1; 
     Player p1, p2;
     p1.name = "P1"; p2.name = "P2"; // กำหนดค่า name สำหรับเอาไว้แสดง
