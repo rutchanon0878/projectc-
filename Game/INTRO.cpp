@@ -9,6 +9,42 @@
 using namespace std; 
 
 int const scale = 5; // ขนาดของกระดาน(ลองเปลี่ยนได้)
+////////////New create//////////////////////////////ขอสไปรท์
+//เหลือสร้างclassเก็บค่าที่สุ่มออกมา
+class Random {
+    string file;
+    vector<string> names; 
+    vector<int> atks;      
+    vector<int> hps;       
+    
+public:
+    void importcard(const string filename);
+};
+
+void Random::importcard(const string filename) {
+    ifstream text(filename);
+    srand(time(NULL));
+    
+    while(getline(text, file)){
+        char name[10]; 
+        int attack, health;
+        sscanf(file.c_str(), "%[^:]: %d %d", name, &attack, &health);
+        names.push_back(name);
+        atks.push_back(attack);
+        hps.push_back(health);
+    }
+    int N = 1;
+    for(int i = 0;i<N ;i++){
+    int number1 = rand()% names.size();
+    int *num = new int(number1);
+    cout << names[number1] << "\n";
+    cout << atks[number1] << "\n";
+    cout << hps[number1] << "\n";
+    delete num;
+  }
+}
+
+////////////End//////////////////////////////ของสไปรท์ถึงนี่
 
 class Unit{
     public:
@@ -20,38 +56,6 @@ class Unit{
         void damaged(int);    // ลดค่า hp ของ unit
 };
 
-////////////New create//////////////////////////////ขอสไปรท์
-//เหลือสร้างclassเก็บค่าที่สุ่มออกมา
-// class random{
-//         public:
-//                 int number1;
-//                 int receive;
-// };
-void importDataFromFile(const string filename,vector<string> &names,vector<int> &atk,vector<int> &hp){
-    ifstream text(filename);
-    string file;
-    char name[10];
-    int attack,health;
-    srand(time(NULL));
-    while(getline(text,file)){
-        char format[] = "%[^:]: %d %d";
-        sscanf(file.c_str(),format,&name,&attack,&health);
-        names.push_back(name);
-        atk.push_back(attack);
-        hp.push_back(health);
-    }
-    int N = 1;
-    for(int i = 0;i<N ;i++){
-    int number1 = rand()%10;
-    int *num = new int(number1);
-    cout << names[number1] << "\n";
-    cout << atk[number1] << "\n";
-    cout << hp[number1] << "\n";
-    delete num;
-  }
-}
-
-////////////End//////////////////////////////ของสไปรท์ถึงนี่
 void Unit::txtUpdate(){
     if(hp > 0) txt = "[" + to_string(atk) + "/" + to_string(hp) + "]"; // แสดงค่า stat ในรูปแบบ [atk/hp]
     else txt = " (x) "; // หากมีค่า hp เป็นศูนย์(unitตายหรือยังไม่ได้สร้าง) จะแสดง (x) แทน
@@ -142,9 +146,10 @@ void combat(Player &first, Player &second){
 int main()
 {
     string filename = "Namecard.txt";
-    vector<string> names;
-    vector<int> atks,hps;
-    importDataFromFile(filename,names,atks,hps);
+    vector<string> nameVector;
+    vector<int> atkVector,hpVector;
+    Random random;
+    random.importcard(filename);
 
     int turn = 1; 
     Player p1, p2;
