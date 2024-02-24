@@ -50,6 +50,14 @@ void Random::importcard(const string filename) {
     // cout << sum_name[0] << "\n";
     // cout << sum_atk[0] << "\n";
     // cout << sum_hp[0] << "\n";
+
+    // cout << sum_name[1] << "\n";
+    // cout << sum_atk[1] << "\n";
+    // cout << sum_hp[1] << "\n";
+
+    // cout << sum_name[2] << "\n";
+    // cout << sum_atk[2] << "\n";
+    // cout << sum_hp[2] << "\n";
 }
 
 ////////////End//////////////////////////////ของสไปรท์ถึงนี่
