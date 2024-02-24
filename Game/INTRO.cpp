@@ -15,7 +15,10 @@ class Random {
     string file;
     vector<string> names; 
     vector<int> atks;      
-    vector<int> hps;       
+    vector<int> hps;
+    string sum_name; 
+    int sum_atk;      
+    int sum_hp;       
     
 public:
     void importcard(const string filename);
@@ -33,13 +36,18 @@ void Random::importcard(const string filename) {
         atks.push_back(attack);
         hps.push_back(health);
     }
-    int N = 1;
+    int N = 3;
     for(int i = 0;i<N ;i++){
     int number1 = rand()% names.size();
     int *num = new int(number1);
-    cout << names[number1] << "\n";
-    cout << atks[number1] << "\n";
-    cout << hps[number1] << "\n";
+    sum_name = names[number1] ; 
+    sum_atk = atks[number1] ; 
+    sum_hp = hps[number1] ;
+
+//ทดสอบระบบ/////////
+    // cout << sum_name << "\n";
+    // cout << sum_atk << "\n";
+    // cout << sum_hp << "\n";
     delete num;
   }
 }
