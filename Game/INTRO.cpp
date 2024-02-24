@@ -16,9 +16,9 @@ class Random {
     vector<string> names; 
     vector<int> atks;      
     vector<int> hps;
-    string sum_name; 
-    int sum_atk;      
-    int sum_hp;       
+    string sum_name[5]; 
+    int sum_atk[5];      
+    int sum_hp[5];       
     
 public:
     void importcard(const string filename);
@@ -40,16 +40,16 @@ void Random::importcard(const string filename) {
     for(int i = 0;i<N ;i++){
     int number1 = rand()% names.size();
     int *num = new int(number1);
-    sum_name = names[number1] ; 
-    sum_atk = atks[number1] ; 
-    sum_hp = hps[number1] ;
+    sum_name[i] = names[number1] ; 
+    sum_atk[i] = atks[number1] ; 
+    sum_hp[i] = hps[number1] ;
 
-//ทดสอบระบบ/////////
-    // cout << sum_name << "\n";
-    // cout << sum_atk << "\n";
-    // cout << sum_hp << "\n";
     delete num;
   }
+  //ทดสอบระบบ/////////
+    // cout << sum_name[0] << "\n";
+    // cout << sum_atk[0] << "\n";
+    // cout << sum_hp[0] << "\n";
 }
 
 ////////////End//////////////////////////////ของสไปรท์ถึงนี่
