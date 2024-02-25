@@ -22,7 +22,6 @@ class Random {
     
 public:
     void importcard(const string filename);
-    void display(Player left, Player right);
 };
 
 void Random::importcard(const string filename) {
@@ -118,7 +117,7 @@ void one(const wchar_t specialChar) {
 // ┇ ╚╤╤╤╤╤╤╤╤╝ ┇
 // ┇____________┇
 // แสดงกระดานใน terminal
-void Random::display(Player left, Player right){ 
+void display(Player left, Player right){ 
 
     wchar_t F = L'\u00CF'; // ใช้รหัส Unicode
     wchar_t G = L'\u00D1';
