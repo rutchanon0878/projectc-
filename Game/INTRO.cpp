@@ -43,6 +43,7 @@ class Player{
         string name;                  // ชื่อไว้สำหรับแสดง
         Unit slots[scale];           // ← ค่า Unit ของแต่ละคนเก็บไว้ที่ตัวนี้
         void attack(Player &, int); // สั่งให้ unit ในช่องที่เลือกโจมตี unit ของฝ่ายตรงข้ามในช่องเดียวกัน
+        bool isDead();
 };
 
 void Player::attack(Player &target, int num){
@@ -94,6 +95,37 @@ void combat(Player &first, Player &second){
         second.attack(first, i);
     }
 }
+////////////////////////////////// ของเวสป้า ///////////////////////////
+bool Player::isDead(){
+    if(hp <= 0) return true;
+    else false;
+}
+
+void p1Win(){
+    cout<<"********************************";
+    for(int i = 0; i<2; i++) cout<<endl;
+    cout<<"           P1 win!!!!           ";
+    for(int i = 0; i<2; i++) cout<<endl;
+    cout<<"********************************";
+}
+
+void p2Win(){
+    cout<<"********************************";
+    for(int i = 0; i<2; i++) cout<<endl;
+    cout<<"           P2 win!!!!           ";
+    for(int i = 0; i<2; i++) cout<<endl;
+    cout<<"********************************";
+}
+
+void bothwin(){
+    cout<<"********************************";
+    for(int i = 0; i<2; i++) cout<<endl;
+    cout<<"             Draw...           ";
+    for(int i = 0; i<2; i++) cout<<endl;
+    cout<<"********************************";
+}
+////////////////////////////////// ยังมีใน main อีก ///////////////////////////
+
 
 int main()
 {
@@ -110,7 +142,13 @@ int main()
         combat(p1, p2);
         cout << "\n";
         turn++;
+        /////////////////////////////////////////////////////////////////////////
+        if(p1.hp <= 0 || p2.hp <= 0) break;
         // วนลูปสลับไปเรื่อยๆยังไม่ได้เขียนโค้ดส่วนชนะ
     }
+    if(p1.hp == p2.hp) bothwin();
+    else if(p1.isDead()) p1Win();
+    else p2Win();
+    //////////////////////////////////////// ของเวสป้าถึงตรงนี้ ///////////////////////////////
     return 0;
 }
