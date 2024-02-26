@@ -9,6 +9,50 @@
 using namespace std; 
 
 int const scale = 5; // ขนาดของกระดาน(ลองเปลี่ยนได้)
+////////////New create//////////////////////////////ขอสไปรท์
+//เหลือสร้างclassเก็บค่าที่สุ่มออกมา
+class Random {
+    string file;
+    vector<string> names; 
+    vector<int> atks;      
+    vector<int> hps;
+    string sum_name[5]; 
+    int sum_atk[5];      
+    int sum_hp[5];       
+    
+public:
+    void importcard(const string filename);
+};
+
+void Random::importcard(const string filename) {
+    ifstream text(filename);
+    srand(time(NULL));
+    
+    while(getline(text, file)){
+        char name[10]; 
+        int attack, health;
+        sscanf(file.c_str(), "%[^:]: %d %d", name, &attack, &health);
+        names.push_back(name);
+        atks.push_back(attack);
+        hps.push_back(health);
+    }
+    int N = 3;
+    for(int i = 0;i<N ;i++){
+    int number1 = rand()% names.size();
+    int *num = new int(number1);
+    sum_name[i] = names[number1] ; 
+    sum_atk[i] = atks[number1] ; 
+    sum_hp[i] = hps[number1] ;
+
+    delete num;
+  }
+  //ทดสอบระบบ/////////
+    // cout << sum_name[0] << "\n";
+    // cout << sum_atk[0] << "\n";
+    // cout << sum_hp[0] << "\n";
+}
+
+////////////End//////////////////////////////ของสไปรท์ถึงนี่
 
 class Unit{
     public:
@@ -43,7 +87,6 @@ class Player{
         string name;                  // ชื่อไว้สำหรับแสดง
         Unit slots[scale];           // ← ค่า Unit ของแต่ละคนเก็บไว้ที่ตัวนี้
         void attack(Player &, int); // สั่งให้ unit ในช่องที่เลือกโจมตี unit ของฝ่ายตรงข้ามในช่องเดียวกัน
-        bool isDead();
 };
 
 void Player::attack(Player &target, int num){
@@ -63,8 +106,14 @@ void display(Player left, Player right){
     cout << "|    " << left.name << "<" << left.hp << ">            " << right.name << "<" << right.hp << ">   |\n"; // บรรทัดสำหรับแสดงค่า hp
     cout << "=================================\n";
 }
-
 // การรับคำสั่งของผู้เล่น
+
+string toUpperStr(string x){
+    string y = x;
+    for(unsigned i = 0; i < x.size();i++) y[i] = toupper(x[i]);
+    return y;
+}
+///////////////////////////////////////////ของฟิว//////New create////
 void action(Player &currP){
     string input;
     int slot, attack, health;
@@ -72,22 +121,28 @@ void action(Player &currP){
     cout << "[" << currP.name << "]: ";
     cin >> input;
     
-    if(input == "skip") return;
-    else if(input == "add"){
+    if(toUpperStr(input) == "SKIP") return;
+    else if(toUpperStr(input) == "ADD"){
         cout << "Choose a slot(1-" << scale << "): "; // ถามว่าจะใส่ช่องไหน
         cin >> slot;
+        while(slot<=0 || slot>5 ){
+            cout << "[!] Invalid command.\nPlease choose a slot(1-" << scale << "): ";
+            cin >> slot;
+
+        }
         cout << "Enter your stat: "; // ถามว่าจะให้ stat เป็นเท่าไหร่ 
         cin >> attack >> health;
         currP.slots[slot-1].create(attack, health); // Update unit ในช่องนั้นให้มีค่าตามที่ใส่
+
     }
+    else if(toUpperStr(input) == "EXIT") return;
     else{
-        cout << "[!] Invalid command. Write \"add\" to create a unit or \"skip\" to skip.\n"; // สำหรับถ้าพิมพ์คำสั่งมาผิด
+        cout << "[!] Invalid command. Write \"add\" to create a unit or \"skip\" to skip or \"End\" to to end the game.\n"; // สำหรับถ้าพิมพ์คำสั่งมาผิด
         action(currP);
     }
-    
     cout << "\n";
 }
-
+///////////////////////////////////////////////ของฟิวถึงนี่//////////////////
 // สั่งให้ unit ทุกช่องสู้กัน
 void combat(Player &first, Player &second){
     for(int i=0; i<scale; i++){
@@ -95,41 +150,16 @@ void combat(Player &first, Player &second){
         second.attack(first, i);
     }
 }
-////////////////////////////////// ของเวสป้า ///////////////////////////
-bool Player::isDead(){
-    if(hp <= 0) return true;
-    else false;
-}
-
-void p1Win(){
-    cout<<"********************************";
-    for(int i = 0; i<2; i++) cout<<endl;
-    cout<<"           P1 win!!!!           ";
-    for(int i = 0; i<2; i++) cout<<endl;
-    cout<<"********************************";
-}
-
-void p2Win(){
-    cout<<"********************************";
-    for(int i = 0; i<2; i++) cout<<endl;
-    cout<<"           P2 win!!!!           ";
-    for(int i = 0; i<2; i++) cout<<endl;
-    cout<<"********************************";
-}
-
-void bothwin(){
-    cout<<"********************************";
-    for(int i = 0; i<2; i++) cout<<endl;
-    cout<<"             Draw...           ";
-    for(int i = 0; i<2; i++) cout<<endl;
-    cout<<"********************************";
-}
-////////////////////////////////// ยังมีใน main อีก ///////////////////////////
-
 
 int main()
 {
-    int turn = 1;
+    string filename = "Namecard.txt";
+    vector<string> nameVector;
+    vector<int> atkVector,hpVector;
+    Random random;
+    random.importcard(filename);
+
+    int turn = 1; 
     Player p1, p2;
     p1.name = "P1"; p2.name = "P2"; // กำหนดค่า name สำหรับเอาไว้แสดง
     while(true){ 
@@ -142,13 +172,7 @@ int main()
         combat(p1, p2);
         cout << "\n";
         turn++;
-        /////////////////////////////////////////////////////////////////////////
-        if(p1.hp <= 0 || p2.hp <= 0) break;
         // วนลูปสลับไปเรื่อยๆยังไม่ได้เขียนโค้ดส่วนชนะ
     }
-    if(p1.hp == p2.hp) bothwin();
-    else if(p1.isDead()) p1Win();
-    else p2Win();
-    //////////////////////////////////////// ของเวสป้าถึงตรงนี้ ///////////////////////////////
     return 0;
 }
