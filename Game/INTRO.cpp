@@ -4,6 +4,7 @@
 #include<vector>
 #include<cstdlib>
 #include<iomanip>
+#include<windows.h>
 //ทำเผื่อๆ
 
 using namespace std; 
@@ -31,6 +32,7 @@ class Random {
     
 public:
     void importcard(const string filename);
+    
 };
 
 void Random::importcard(const string filename) {
@@ -57,26 +59,26 @@ void Random::importcard(const string filename) {
   }
   //ทดสอบระบบ/////////
     cout << sum_name[0] << "\n";
-    // cout << sum_atk[0] << "\n";
-    // cout << sum_hp[0] << "\n";
+    cout << sum_atk[0] << "\n";
+    cout << sum_hp[0] << "\n";
 }
 ////////////New create//////////////////////////////ขอสไปรท์
-void importDataFromFile(const string filename,vector<string> &names,vector<int> &atk,vector<int> &hp){
-    ifstream text(filename);
-    string file;
-    char name[10];
-    int attack,health;
-    int receive;
-    while(getline(text,file)){
-        char format[] = "%[^:]: %d %d";
-        sscanf(file.c_str(),format,&name,&atk,&hp);
-        names.push_back(name);
-        atk.push_back(attack);
-        hp.push_back(health);
-    }
-    receive = rand()%9;
+// void importDataFromFile(const string filename,vector<string> &names,vector<int> &atk,vector<int> &hp){
+//     ifstream text(filename);
+//     string file;
+//     char name[10];
+//     int attack,health;
+//     int receive;
+//     while(getline(text,file)){
+//         char format[] = "%[^:]: %d %d";
+//         sscanf(file.c_str(),format,&name,&atk,&hp);
+//         names.push_back(name);
+//         atk.push_back(attack);
+//         hp.push_back(health);
+//     }
+//     receive = rand()%9;
 
-};
+// };
 
 ////////////End//////////////////////////////ของสไปรท์ถึงนี่
 void Unit::txtUpdate(){
@@ -128,6 +130,10 @@ void one(const wchar_t specialChar) {
 // ┇____________┇
 // แสดงกระดานใน terminal
 void display(Player left, Player right){ 
+    
+        HANDLE Color = GetStdHandle(STD_OUTPUT_HANDLE);
+        SetConsoleTextAttribute(Color,14);
+        cout << "Check" << endl;
 
     wchar_t F = L'\u00CF'; // ใช้รหัส Unicode
     wchar_t G = L'\u00D1';
@@ -135,7 +141,8 @@ void display(Player left, Player right){
     wchar_t B = L'\u00BB';
     wchar_t C = L'\u00C8';
     wchar_t D = L'\u00BC';
-    
+
+
     // one(A);
     // many(F);
     // one(B);
@@ -145,6 +152,7 @@ void display(Player left, Player right){
     // one(D);
     cout << endl;
     cout << "====================================================================================================================================\n";
+    SetConsoleTextAttribute(Color,3);
     for(int i=0; i<scale; i++){
         // cout << "|    " << left.slots[i].txt << "     <->     " << right.slots[i].txt << "    |\n"; // วนแสดง unit ที่อยู่ในแต่ละช่อง
         cout << "          ";
@@ -174,7 +182,9 @@ void display(Player left, Player right){
     }
     cout << "_________________________________\n";
     cout << "|    " << left.name << "<" << left.hp << ">            " << right.name << "<" << right.hp << ">   |\n"; // บรรทัดสำหรับแสดงค่า hp
+    SetConsoleTextAttribute(Color,14);
     cout << "====================================================================================================================================\n";
+
 }
 
 string toUpperStr(string x){
