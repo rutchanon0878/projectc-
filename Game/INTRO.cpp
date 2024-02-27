@@ -9,7 +9,7 @@
 using namespace std; 
 
 int const scale = 5; // ขนาดของกระดาน(ลองเปลี่ยนได้)
-////////////New create//////////////////////////////ขอสไปรท์
+////////////New create//////////////////////////////ขอสไปรท์/////////////////////////////////////////
 //เหลือสร้างclassเก็บค่าที่สุ่มออกมา
 class Random {
     string file;
@@ -50,9 +50,13 @@ void Random::importcard(const string filename) {
     // cout << sum_name[0] << "\n";
     // cout << sum_atk[0] << "\n";
     // cout << sum_hp[0] << "\n";
+
+    // cout << sum_name[1] << "\n";
+    // cout << sum_atk[1] << "\n";
+    // cout << sum_hp[1] << "\n";
 }
 
-////////////End//////////////////////////////ของสไปรท์ถึงนี่
+////////////End//////////////////////////////ของสไปรท์ถึงนี่////////////////////////////////////////////////
 
 class Unit{
     public:
@@ -95,25 +99,80 @@ void Player::attack(Player &target, int num){
         else target.slots[num].damaged(slots[num].atk);
     }
 }
+/////////////////////////////////////pond/////////////////////////////////////////////////////////
+/////////////////////////////ของปอนด์เริ่มตรงนี้!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+void many(const wchar_t specialChar) {
+    for (int N=1; N<9; N++)
+    wcout << specialChar;
+}
 
+void one(const wchar_t specialChar) {
+    wcout << specialChar;
+}
+//  ____________
+// ┇✖  Gula   ✖┇
+// ┇ ╔╧╧╧╧╧╧╧╧╗ ┇
+// ┇⚔️ -<3>- ⚔️┇
+// ┇❤️️ -<4>- ❤️️┇
+// ┇ ╚╤╤╤╤╤╤╤╤╝ ┇
+// ┇____________┇
 // แสดงกระดานใน terminal
 void display(Player left, Player right){ 
-    cout << "=================================\n";
+
+    wchar_t F = L'\u00CF'; // ใช้รหัส Unicode
+    wchar_t G = L'\u00D1';
+    wchar_t A = L'\u00C9';
+    wchar_t B = L'\u00BB';
+    wchar_t C = L'\u00C8';
+    wchar_t D = L'\u00BC';
+    
+    // one(A);
+    // many(F);
+    // one(B);
+    // cout << "\n\n\n\n";
+    // one(C);
+    // many(G);
+    // one(D);
+    cout << endl;
+    cout << "====================================================================================================================================\n";
     for(int i=0; i<scale; i++){
-        cout << "|    " << left.slots[i].txt << "     <->     " << right.slots[i].txt << "    |\n"; // วนแสดง unit ที่อยู่ในแต่ละช่อง
+        // cout << "|    " << left.slots[i].txt << "     <->     " << right.slots[i].txt << "    |\n"; // วนแสดง unit ที่อยู่ในแต่ละช่อง
+        cout << "          ";
+        cout <<             " ____________" << "                                                                                        " << "____________";
+        cout << "\n          |     ZX     |" << "                                                                                      " << "|            |";
+        cout << "\n          | ";
+        one(A);
+        many(F);
+        one(B);
+        cout << " |" << "                                                                                      " << "| ";
+        one(A);
+        many(F);
+        one(B);
+        cout << " |";
+        cout << "\n          |            |" << "                                                                                      " << "|            |";
+        cout << "\n          |            |" << "                                                                                      " << "|            |";
+        cout << "\n          | ";
+        one(C);
+        many(G);
+        one(D);
+        cout << " |" << "                                                                                      " << "| ";
+        one(C);
+        many(G);
+        one(D);
+        cout << " |";
+        cout << "\n          |____________|" << "                                                                                      " << "|____________|\n";
     }
     cout << "_________________________________\n";
     cout << "|    " << left.name << "<" << left.hp << ">            " << right.name << "<" << right.hp << ">   |\n"; // บรรทัดสำหรับแสดงค่า hp
-    cout << "=================================\n";
+    cout << "====================================================================================================================================\n";
 }
-// การรับคำสั่งของผู้เล่น
 
 string toUpperStr(string x){
     string y = x;
     for(unsigned i = 0; i < x.size();i++) y[i] = toupper(x[i]);
     return y;
 }
-///////////////////////////////////////////ของฟิว//////New create////
+///////////////////////////////////////////ของฟิว//////New create/////////////////////////////
 void action(Player &currP){
     string input;
     int slot, attack, health;
@@ -142,7 +201,7 @@ void action(Player &currP){
     }
     cout << "\n";
 }
-///////////////////////////////////////////////ของฟิวถึงนี่//////////////////
+///////////////////////////////////////////////ของฟิวถึงนี่//////////////////////////////////////////////////
 // สั่งให้ unit ทุกช่องสู้กัน
 void combat(Player &first, Player &second){
     for(int i=0; i<scale; i++){
