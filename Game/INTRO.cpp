@@ -8,7 +8,8 @@
 
 using namespace std; 
 
-int const scale = 5; // ขนาดของกระดาน(ลองเปลี่ยนได้)
+int const scale = 4; // ขนาดของกระดาน(ลองเปลี่ยนได้)
+
 
 class Unit{
     public:
@@ -52,19 +53,85 @@ void Player::attack(Player &target, int num){
         else target.slots[num].damaged(slots[num].atk);
     }
 }
-
-// แสดงกระดานใน terminal
-void display(Player left, Player right){ 
-    cout << "=================================\n";
-    for(int i=0; i<scale; i++){
-        cout << "|    " << left.slots[i].txt << "     <->     " << right.slots[i].txt << "    |\n"; // วนแสดง unit ที่อยู่ในแต่ละช่อง
-    }
-    cout << "_________________________________\n";
-    cout << "|    " << left.name << "<" << left.hp << ">            " << right.name << "<" << right.hp << ">   |\n"; // บรรทัดสำหรับแสดงค่า hp
-    cout << "=================================\n";
+/////////////////////////////////////pond/////////////////////////////////////////////////////////
+/////////////////////////////ของปอนด์เริ่มตรงนี้!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+void many(const wchar_t specialChar) {
+    for (int N=1; N<9; N++)
+    wcout << specialChar;
 }
 
-// การรับคำสั่งของผู้เล่น
+void one(const wchar_t specialChar) {
+    wcout << specialChar;
+}
+//  ____________
+// ┇✖  Gula   ✖┇
+// ┇ ╔╧╧╧╧╧╧╧╧╗ ┇
+// ┇⚔️ -<3>- ⚔️┇
+// ┇❤️️ -<4>- ❤️️┇
+// ┇ ╚╤╤╤╤╤╤╤╤╝ ┇
+// ┇____________┇
+// แสดงกระดานใน terminal
+void display(Player p1, Player p2,Random name,Random attack,Random health){ 
+
+    wchar_t F = L'\u00CF'; // ใช้รหัส Unicode
+    wchar_t G = L'\u00D1';
+    wchar_t A = L'\u00C9';
+    wchar_t B = L'\u00BB';
+    wchar_t C = L'\u00C8';
+    wchar_t D = L'\u00BC';
+    
+    // one(A);
+    // many(F);
+    // one(B);
+    // cout << "\n\n\n\n";
+    // one(C);
+    // many(G);
+    // one(D);
+    cout << endl;
+    cout << "====================================================================================================================================\n";
+    for(int i=0; i<scale; i++){
+        // cout << "|    " << left.slots[i].txt << "     <->     " << right.slots[i].txt << "    |\n"; // วนแสดง unit ที่อยู่ในแต่ละช่อง
+        cout << name.sum_name[i]<<"\n";
+        cout << attack.sum_atk[i]<<"\n";
+        cout << health.sum_hp[i]<<"\n";
+        cout << "          ";
+        cout <<             " ____________" << "                                                                                        " << "____________";
+        cout << "\n          |            |" << "                                                                                      " << "|            |";
+        cout << "\n          | ";
+        one(A);
+        many(F);
+        one(B);
+        cout << " |" << "                                                                                      " << "| ";
+        one(A);
+        many(F);
+        one(B);
+        cout << " |";
+        cout << "\n          |            |" << "                                                                                      " << "|            |";
+        cout << "\n          |            |" << "                                                                                      " << "|            |";
+        cout << "\n          | ";
+        one(C);
+        many(G);
+        one(D);
+        cout << " |" << "                                                                                      " << "| ";
+        one(C);
+        many(G);
+        one(D);
+        cout << " |";
+        cout << "\n          |____________|" << "                                                                                      " << "|____________|\n";
+    }
+    
+    
+    cout << "_________________________________\n";
+    cout << "|    " << p1.name << "<" << p1.hp << ">            " << p2.name << "<" << p2.hp << ">   |\n"; // บรรทัดสำหรับแสดงค่า hp
+    cout << "====================================================================================================================================\n";
+}
+
+string toUpperStr(string x){
+    string y = x;
+    for(unsigned i = 0; i < x.size();i++) y[i] = toupper(x[i]);
+    return y;
+}
+///////////////////////////////////////////ของฟิว//////New create/////////////////////////////
 void action(Player &currP){
     string input;
     int slot, attack, health;
@@ -72,22 +139,28 @@ void action(Player &currP){
     cout << "[" << currP.name << "]: ";
     cin >> input;
     
-    if(input == "skip") return;
-    else if(input == "add"){
+    if(toUpperStr(input) == "SKIP") return;
+    else if(toUpperStr(input) == "ADD"){
         cout << "Choose a slot(1-" << scale << "): "; // ถามว่าจะใส่ช่องไหน
         cin >> slot;
+        while(slot<=0 || slot>5 ){
+            cout << "[!] Invalid command.\nPlease choose a slot(1-" << scale << "): ";
+            cin >> slot;
+
+        }
         cout << "Enter your stat: "; // ถามว่าจะให้ stat เป็นเท่าไหร่ 
         cin >> attack >> health;
         currP.slots[slot-1].create(attack, health); // Update unit ในช่องนั้นให้มีค่าตามที่ใส่
+
     }
+    else if(toUpperStr(input) == "EXIT") return;
     else{
-        cout << "[!] Invalid command. Write \"add\" to create a unit or \"skip\" to skip.\n"; // สำหรับถ้าพิมพ์คำสั่งมาผิด
+        cout << "[!] Invalid command. Write \"add\" to create a unit or \"skip\" to skip or \"End\" to to end the game.\n"; // สำหรับถ้าพิมพ์คำสั่งมาผิด
         action(currP);
     }
-    
     cout << "\n";
 }
-
+///////////////////////////////////////////////ของฟิวถึงนี่//////////////////////////////////////////////////
 // สั่งให้ unit ทุกช่องสู้กัน
 void combat(Player &first, Player &second){
     for(int i=0; i<scale; i++){
@@ -129,16 +202,24 @@ void bothwin(){
 
 int main()
 {
-    int turn = 1;
+    string filename = "Namecard.txt";
+    vector<string> nameVector;
+    vector<int> atkVector,hpVector;
+    Random name,attack,health;
+    name.importcard(filename);
+    attack.importcard(filename);
+    health.importcard(filename);
+
+    int turn = 1; 
     Player p1, p2;
     p1.name = "P1"; p2.name = "P2"; // กำหนดค่า name สำหรับเอาไว้แสดง
     while(true){ 
         cout << "<<< Turn " << turn << " >>>\n";
-        display(p1, p2);
+        display(p1, p2,name,attack,health);
         action(p1);
-        display(p1, p2);
+        display(p1, p2,name,attack,health);
         action(p2);
-        display(p1, p2);
+        display(p1, p2,name,attack,health);
         combat(p1, p2);
         cout << "\n";
         turn++;
