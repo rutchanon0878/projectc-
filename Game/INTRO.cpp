@@ -9,20 +9,44 @@
 using namespace std; 
 
 int const scale = 4; // ขนาดของกระดาน(ลองเปลี่ยนได้)
-////////////New create//////////////////////////////ขอสไปรท์/////////////////////////////////////////
+
+
+class Unit{
+    public:
+        int hp = 0;
+        int atk = 0;
+        string txt = " (x) ";    // ค่าตัวอักษรที่แสดงใน terminal
+        void txtUpdate();       // Update ตัวแปร txt อันด้านบน ↑
+        void create(int, int); // Update ค่า stat ของ unit
+        void damaged(int);    // ลดค่า hp ของ unit
+};
+
+class Player{
+    public:
+        int hp = 10;
+        string name;                  // ชื่อไว้สำหรับแสดง
+        Unit slots[scale];           // ← ค่า Unit ของแต่ละคนเก็บไว้ที่ตัวนี้
+        void attack(Player &, int); // สั่งให้ unit ในช่องที่เลือกโจมตี unit ของฝ่ายตรงข้ามในช่องเดียวกัน
+};
+
 //เหลือสร้างclassเก็บค่าที่สุ่มออกมา
 class Random {
     string file;
     vector<string> names; 
     vector<int> atks;      
     vector<int> hps;
-    string sum_name[scale]; 
-    int sum_atk[scale];      
-    int sum_hp[scale];       
     
 public:
+    string sum_name[scale]; 
+    int sum_atk[scale];      
+    int sum_hp[scale];  
     void importcard(const string filename);
 };
+
+
+
+
+
 
 void Random::importcard(const string filename) {
     ifstream text(filename);
@@ -36,7 +60,7 @@ void Random::importcard(const string filename) {
         atks.push_back(attack);
         hps.push_back(health);
     }
-    int N = 3;
+    int N = 2;
     for(int i = 0;i<N ;i++){
     int number1 = rand()% names.size();
     int *num = new int(number1);
@@ -56,17 +80,7 @@ void Random::importcard(const string filename) {
     // cout << sum_hp[1] << "\n";
 }
 
-////////////End//////////////////////////////ของสไปรท์ถึงนี่////////////////////////////////////////////////
 
-class Unit{
-    public:
-        int hp = 0;
-        int atk = 0;
-        string txt = " (x) ";    // ค่าตัวอักษรที่แสดงใน terminal
-        void txtUpdate();       // Update ตัวแปร txt อันด้านบน ↑
-        void create(int, int); // Update ค่า stat ของ unit
-        void damaged(int);    // ลดค่า hp ของ unit
-};
 
 void Unit::txtUpdate(){
     if(hp > 0) txt = "[" + to_string(atk) + "/" + to_string(hp) + "]"; // แสดงค่า stat ในรูปแบบ [atk/hp]
@@ -84,14 +98,6 @@ void Unit::damaged(int amount){
     hp = (hp < 0) ? 0 : hp;         // เพื่อไม่ให้ hp เป็นจำนวนติดลบ
     txtUpdate();
 }
-
-class Player{
-    public:
-        int hp = 10;
-        string name;                  // ชื่อไว้สำหรับแสดง
-        Unit slots[scale];           // ← ค่า Unit ของแต่ละคนเก็บไว้ที่ตัวนี้
-        void attack(Player &, int); // สั่งให้ unit ในช่องที่เลือกโจมตี unit ของฝ่ายตรงข้ามในช่องเดียวกัน
-};
 
 void Player::attack(Player &target, int num){
     if(slots[num].hp > 0){
@@ -117,7 +123,7 @@ void one(const wchar_t specialChar) {
 // ┇ ╚╤╤╤╤╤╤╤╤╝ ┇
 // ┇____________┇
 // แสดงกระดานใน terminal
-void display(Player left, Player right){ 
+void display(Player p1, Player p2,Random name,Random attack,Random health){ 
 
     wchar_t F = L'\u00CF'; // ใช้รหัส Unicode
     wchar_t G = L'\u00D1';
@@ -137,9 +143,12 @@ void display(Player left, Player right){
     cout << "====================================================================================================================================\n";
     for(int i=0; i<scale; i++){
         // cout << "|    " << left.slots[i].txt << "     <->     " << right.slots[i].txt << "    |\n"; // วนแสดง unit ที่อยู่ในแต่ละช่อง
+        cout << name.sum_name[i]<<"\n";
+        cout << attack.sum_atk[i]<<"\n";
+        cout << health.sum_hp[i]<<"\n";
         cout << "          ";
         cout <<             " ____________" << "                                                                                        " << "____________";
-        cout << "\n          |     ZX     |" << "                                                                                      " << "|            |";
+        cout << "\n          |            |" << "                                                                                      " << "|            |";
         cout << "\n          | ";
         one(A);
         many(F);
@@ -162,8 +171,10 @@ void display(Player left, Player right){
         cout << " |";
         cout << "\n          |____________|" << "                                                                                      " << "|____________|\n";
     }
+    
+    
     cout << "_________________________________\n";
-    cout << "|    " << left.name << "<" << left.hp << ">            " << right.name << "<" << right.hp << ">   |\n"; // บรรทัดสำหรับแสดงค่า hp
+    cout << "|    " << p1.name << "<" << p1.hp << ">            " << p2.name << "<" << p2.hp << ">   |\n"; // บรรทัดสำหรับแสดงค่า hp
     cout << "====================================================================================================================================\n";
 }
 
@@ -210,24 +221,33 @@ void combat(Player &first, Player &second){
     }
 }
 
+
+
+
+
+
+
+
 int main()
 {
     string filename = "Namecard.txt";
     vector<string> nameVector;
     vector<int> atkVector,hpVector;
-    Random random;
-    random.importcard(filename);
+    Random name,attack,health;
+    name.importcard(filename);
+    attack.importcard(filename);
+    health.importcard(filename);
 
     int turn = 1; 
     Player p1, p2;
     p1.name = "P1"; p2.name = "P2"; // กำหนดค่า name สำหรับเอาไว้แสดง
     while(true){ 
         cout << "<<< Turn " << turn << " >>>\n";
-        display(p1, p2);
+        display(p1, p2,name,attack,health);
         action(p1);
-        display(p1, p2);
+        display(p1, p2,name,attack,health);
         action(p2);
-        display(p1, p2);
+        display(p1, p2,name,attack,health);
         combat(p1, p2);
         cout << "\n";
         turn++;
