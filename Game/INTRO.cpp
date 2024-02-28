@@ -16,9 +16,9 @@ class Random {
     vector<string> names; 
     vector<int> atks;      
     vector<int> hps;
-    string sum_name[5]; 
-    int sum_atk[5];      
-    int sum_hp[5];       
+    string sum_name[scale]; 
+    int sum_atk[scale];      
+    int sum_hp[scale];       
     
 public:
     void importcard(const string filename);
