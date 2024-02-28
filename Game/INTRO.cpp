@@ -20,6 +20,15 @@ class Unit{
         void damaged(int);    // ลดค่า hp ของ unit
 };
 
+class Player{
+    public:
+        int hp = 10;
+        string name;                  // ชื่อไว้สำหรับแสดง
+        Unit slots[scale];           // ← ค่า Unit ของแต่ละคนเก็บไว้ที่ตัวนี้
+        void attack(Player &, int); // สั่งให้ unit ในช่องที่เลือกโจมตี unit ของฝ่ายตรงข้ามในช่องเดียวกัน
+        bool isDead();
+};
+
 void Unit::txtUpdate(){
     if(hp > 0) txt = "[" + to_string(atk) + "/" + to_string(hp) + "]"; // แสดงค่า stat ในรูปแบบ [atk/hp]
     else txt = " (x) "; // หากมีค่า hp เป็นศูนย์(unitตายหรือยังไม่ได้สร้าง) จะแสดง (x) แทน
@@ -36,15 +45,6 @@ void Unit::damaged(int amount){
     hp = (hp < 0) ? 0 : hp;         // เพื่อไม่ให้ hp เป็นจำนวนติดลบ
     txtUpdate();
 }
-
-class Player{
-    public:
-        int hp = 10;
-        string name;                  // ชื่อไว้สำหรับแสดง
-        Unit slots[scale];           // ← ค่า Unit ของแต่ละคนเก็บไว้ที่ตัวนี้
-        void attack(Player &, int); // สั่งให้ unit ในช่องที่เลือกโจมตี unit ของฝ่ายตรงข้ามในช่องเดียวกัน
-        bool isDead();
-};
 
 void Player::attack(Player &target, int num){
     if(slots[num].hp > 0){
@@ -102,27 +102,27 @@ bool Player::isDead(){
 }
 
 void p1Win(){
-    cout<<"********************************";
-    for(int i = 0; i<2; i++) cout<<endl;
-    cout<<"           P1 win!!!!           ";
-    for(int i = 0; i<2; i++) cout<<endl;
-    cout<<"********************************";
+    cout<<"---------------------------------"<<endl;
+    for(int i = 0; i<1; i++) cout<<"|                              |"<<endl;
+    cout<<"|          P1 win!!!!          |"<<endl;
+    for(int i = 0; i<1; i++) cout<<"|                              |"<<endl;
+    cout<<"---------------------------------";
 }
 
 void p2Win(){
-    cout<<"********************************";
-    for(int i = 0; i<2; i++) cout<<endl;
-    cout<<"           P2 win!!!!           ";
-    for(int i = 0; i<2; i++) cout<<endl;
-    cout<<"********************************";
+    cout<<"--------------------------------"<<endl;
+    for(int i = 0; i<1; i++) cout<<"|                              |"<<endl;
+    cout<<"|          P2 win!!!!          |"<<endl;
+    for(int i = 0; i<1; i++) cout<<"|                              |"<<endl;
+    cout<<"--------------------------------";
 }
 
 void bothwin(){
-    cout<<"********************************";
-    for(int i = 0; i<2; i++) cout<<endl;
-    cout<<"             Draw...           ";
-    for(int i = 0; i<2; i++) cout<<endl;
-    cout<<"********************************";
+    cout<<"--------------------------------"<<endl;
+    for(int i = 0; i<1; i++) cout<<"|                              |"<<endl;
+    cout<<"|            Draw...          |"<<endl;
+    for(int i = 0; i<1; i++) cout<<"|                              |"<<endl;
+    cout<<"--------------------------------";
 }
 ////////////////////////////////// ยังมีใน main อีก ///////////////////////////
 
