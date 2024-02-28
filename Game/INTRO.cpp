@@ -27,60 +27,8 @@ class Player{
         string name;                  // ชื่อไว้สำหรับแสดง
         Unit slots[scale];           // ← ค่า Unit ของแต่ละคนเก็บไว้ที่ตัวนี้
         void attack(Player &, int); // สั่งให้ unit ในช่องที่เลือกโจมตี unit ของฝ่ายตรงข้ามในช่องเดียวกัน
+        bool isDead();
 };
-
-//เหลือสร้างclassเก็บค่าที่สุ่มออกมา
-class Random {
-    string file;
-    vector<string> names; 
-    vector<int> atks;      
-    vector<int> hps;
-    
-public:
-    string sum_name[scale]; 
-    int sum_atk[scale];      
-    int sum_hp[scale];  
-    void importcard(const string filename);
-};
-
-
-
-
-
-
-void Random::importcard(const string filename) {
-    ifstream text(filename);
-    srand(time(NULL));
-    
-    while(getline(text, file)){
-        char name[10]; 
-        int attack, health;
-        sscanf(file.c_str(), "%[^:]: %d %d", name, &attack, &health);
-        names.push_back(name);
-        atks.push_back(attack);
-        hps.push_back(health);
-    }
-    int N = 2;
-    for(int i = 0;i<N ;i++){
-    int number1 = rand()% names.size();
-    int *num = new int(number1);
-    sum_name[i] = names[number1] ; 
-    sum_atk[i] = atks[number1] ; 
-    sum_hp[i] = hps[number1] ;
-
-    delete num;
-  }
-  //ทดสอบระบบ/////////
-    // cout << sum_name[0] << "\n";
-    // cout << sum_atk[0] << "\n";
-    // cout << sum_hp[0] << "\n";
-
-    // cout << sum_name[1] << "\n";
-    // cout << sum_atk[1] << "\n";
-    // cout << sum_hp[1] << "\n";
-}
-
-
 
 void Unit::txtUpdate(){
     if(hp > 0) txt = "[" + to_string(atk) + "/" + to_string(hp) + "]"; // แสดงค่า stat ในรูปแบบ [atk/hp]
@@ -220,12 +168,36 @@ void combat(Player &first, Player &second){
         second.attack(first, i);
     }
 }
+////////////////////////////////// ของเวสป้า ///////////////////////////
+bool Player::isDead(){
+    if(hp <= 0) return true;
+    else false;
+}
 
+void p1Win(){
+    cout<<"---------------------------------"<<endl;
+    for(int i = 0; i<1; i++) cout<<"|                              |"<<endl;
+    cout<<"|          P1 win!!!!          |"<<endl;
+    for(int i = 0; i<1; i++) cout<<"|                              |"<<endl;
+    cout<<"---------------------------------";
+}
 
+void p2Win(){
+    cout<<"--------------------------------"<<endl;
+    for(int i = 0; i<1; i++) cout<<"|                              |"<<endl;
+    cout<<"|          P2 win!!!!          |"<<endl;
+    for(int i = 0; i<1; i++) cout<<"|                              |"<<endl;
+    cout<<"--------------------------------";
+}
 
-
-
-
+void bothwin(){
+    cout<<"--------------------------------"<<endl;
+    for(int i = 0; i<1; i++) cout<<"|                              |"<<endl;
+    cout<<"|            Draw...          |"<<endl;
+    for(int i = 0; i<1; i++) cout<<"|                              |"<<endl;
+    cout<<"--------------------------------";
+}
+////////////////////////////////// ยังมีใน main อีก ///////////////////////////
 
 
 int main()
@@ -251,7 +223,13 @@ int main()
         combat(p1, p2);
         cout << "\n";
         turn++;
+        /////////////////////////////////////////////////////////////////////////
+        if(p1.hp <= 0 || p2.hp <= 0) break;
         // วนลูปสลับไปเรื่อยๆยังไม่ได้เขียนโค้ดส่วนชนะ
     }
+    if(p1.hp == p2.hp) bothwin();
+    else if(p1.isDead()) p1Win();
+    else p2Win();
+    //////////////////////////////////////// ของเวสป้าถึงตรงนี้ ///////////////////////////////
     return 0;
 }
