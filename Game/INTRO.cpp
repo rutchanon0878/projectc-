@@ -219,11 +219,14 @@ int main()
     vector<string> nameVector;
     vector<int> atkVector,hpVector;
     Random random;
+    Random name1, attack1, health1;
     random.importcard(filename);
+    name1.importcard(filename);
+    attack1.importcard(filename);
+    health1.importcard(filename);
 
     int turn = 1; 
     Player p1, p2;
-    Random name1, attack1, health1;
     p1.name = "P1"; p2.name = "P2"; // กำหนดค่า name สำหรับเอาไว้แสดง
     while(true){ 
         cout << "<<< Turn " << turn << " >>>\n";
