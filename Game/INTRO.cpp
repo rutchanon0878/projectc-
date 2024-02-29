@@ -15,12 +15,12 @@ class Random {
     string file;
     vector<string> names; 
     vector<int> atks;      
-    vector<int> hps;
-    string sum_name[5]; 
-    int sum_atk[5];      
-    int sum_hp[5];       
+    vector<int> hps;     
     
 public:
+    string sum_name[scale]; 
+    int sum_atk[scale];      
+    int sum_hp[scale];  
     void importcard(const string filename);
 };
 
@@ -117,7 +117,7 @@ void one(const wchar_t specialChar) {
 // ┇ ╚╤╤╤╤╤╤╤╤╝ ┇
 // ┇____________┇
 // แสดงกระดานใน terminal
-void display(Player left, Player right){ 
+void display(Player left, Player right,Random name1,Random attack1,Random health1){ 
 
     wchar_t F = L'\u00CF'; // ใช้รหัส Unicode
     wchar_t G = L'\u00D1';
@@ -137,6 +137,9 @@ void display(Player left, Player right){
     cout << "====================================================================================================================================\n";
     for(int i=0; i<scale; i++){
         // cout << "|    " << left.slots[i].txt << "     <->     " << right.slots[i].txt << "    |\n"; // วนแสดง unit ที่อยู่ในแต่ละช่อง
+        cout << name1.sum_name[i];
+        cout << attack1.sum_atk[i];
+        cout << health1.sum_hp[i];
         cout << "          ";
         cout <<             " ____________" << "                                                                                        " << "____________";
         cout << "\n          |     ZX     |" << "                                                                                      " << "|            |";
@@ -220,14 +223,15 @@ int main()
 
     int turn = 1; 
     Player p1, p2;
+    Random name1, attack1, health1;
     p1.name = "P1"; p2.name = "P2"; // กำหนดค่า name สำหรับเอาไว้แสดง
     while(true){ 
         cout << "<<< Turn " << turn << " >>>\n";
-        display(p1, p2);
+        display(p1, p2, name1, attack1, health1);
         action(p1);
-        display(p1, p2);
+        display(p1, p2, name1, attack1, health1);
         action(p2);
-        display(p1, p2);
+        display(p1, p2, name1, attack1, health1);
         combat(p1, p2);
         cout << "\n";
         turn++;
