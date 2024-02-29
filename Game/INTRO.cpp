@@ -137,9 +137,9 @@ void display(Player left, Player right,Random name1,Random attack1,Random health
     cout << "====================================================================================================================================\n";
     for(int i=0; i<scale; i++){
         // cout << "|    " << left.slots[i].txt << "     <->     " << right.slots[i].txt << "    |\n"; // วนแสดง unit ที่อยู่ในแต่ละช่อง
-        cout << name1.sum_name[i];
-        cout << attack1.sum_atk[i];
-        cout << health1.sum_hp[i];
+        cout << name1.sum_name[i]<< endl;
+        cout << attack1.sum_atk[i]<<endl;
+        cout << health1.sum_hp[i]<<endl;
         cout << "          ";
         cout <<             " ____________" << "                                                                                        " << "____________";
         cout << "\n          |     ZX     |" << "                                                                                      " << "|            |";

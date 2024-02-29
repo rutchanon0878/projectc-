@@ -3,7 +3,8 @@
         "intro": "cpp",
         "iostream": "cpp",
         "string": "cpp",
-        "iosfwd": "cpp"
+        "iosfwd": "cpp",
+        "ostream": "cpp"
     },
     "C_Cpp.errorSquiggles": "disabled"
 }
