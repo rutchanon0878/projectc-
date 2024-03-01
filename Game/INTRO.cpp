@@ -118,6 +118,7 @@ class Player{
         string name;                  // ชื่อไว้สำหรับแสดง
         Unit slots[scale];           // ← ค่า Unit ของแต่ละคนเก็บไว้ที่ตัวนี้
         void attack(Player &, int); // สั่งให้ unit ในช่องที่เลือกโจมตี unit ของฝ่ายตรงข้ามในช่องเดียวกัน
+        bool isDead();
 };
 
 void Player::attack(Player &target, int num){
@@ -304,6 +305,37 @@ void combat(Player &first, Player &second){
     }
 }
 
+////////////////////////////////// ของเวสป้า ///////////////////////////
+bool Player::isDead(){
+    if(hp <= 0) return true;
+    else false;
+}
+
+void p1Win(){
+    cout<<"---------------------------------"<<endl;
+    for(int i = 0; i<1; i++) cout<<"|                              |"<<endl;
+    cout<<"|          P1 win!!!!          |"<<endl;
+    for(int i = 0; i<1; i++) cout<<"|                              |"<<endl;
+    cout<<"---------------------------------";
+}
+
+void p2Win(){
+    cout<<"--------------------------------"<<endl;
+    for(int i = 0; i<1; i++) cout<<"|                              |"<<endl;
+    cout<<"|          P2 win!!!!          |"<<endl;
+    for(int i = 0; i<1; i++) cout<<"|                              |"<<endl;
+    cout<<"--------------------------------";
+}
+
+void bothwin(){
+    cout<<"--------------------------------"<<endl;
+    for(int i = 0; i<1; i++) cout<<"|                              |"<<endl;
+    cout<<"|            Draw...          |"<<endl;
+    for(int i = 0; i<1; i++) cout<<"|                              |"<<endl;
+    cout<<"--------------------------------";
+}
+////////////////////////////////// ยังมีใน main อีก ///////////////////////////
+
 int main()
 {
     string filename = "Namecard.txt";
@@ -337,8 +369,14 @@ int main()
         display(p1, p2, name1, attack1, health1, name2, attack2, health2);
         combat(p1, p2);
         cout << "\n";
-        turn++;
+        /////////////////////////////////////////////////////////////////////////
+        if(p1.hp <= 0 || p2.hp <= 0) break;
         // วนลูปสลับไปเรื่อยๆยังไม่ได้เขียนโค้ดส่วนชนะ
+        turn++;
     }
+    if(p1.hp == p2.hp) bothwin();
+    else if(p1.isDead()) p1Win();
+    else p2Win();
+    //////////////////////////////////////// ของเวสป้าถึงตรงนี้ ///////////////////////////////
     return 0;
 }
