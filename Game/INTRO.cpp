@@ -27,11 +27,10 @@ public:
     int sum_atk2[scale];      
     int sum_hp2[scale];   
    
-    void importcard(const string filename,int N);
-
+    void importcard(const string filename);
 };
 
-void Random::importcard(const string filename, int N) {
+void Random::importcard(const string filename) {
     ifstream text(filename);
     srand(time(NULL));
     
@@ -43,7 +42,7 @@ void Random::importcard(const string filename, int N) {
         atks.push_back(attack);
         hps.push_back(health);
     }
-    int M = 4;
+    int N = 2, M = 4;
     for(int i = 0;i<N ;i++){
     int number1 = rand()% names.size();
     int *num1 = new int(number1);
@@ -142,11 +141,11 @@ void many(const wchar_t specialChar) {
 void one(const wchar_t specialChar) {
     wcout << specialChar;
 }
-//  ____________
+//  ________
 // ┇✖  Gula   ✖┇
 // ┇ ╔╧╧╧╧╧╧╧╧╗ ┇
 // ┇⚔️ -<3>- ⚔️┇
-// ┇❤️️ -<4>- ❤️️┇
+// ┇❤️️ -<4>- ❤️️┇        
 // ┇ ╚╤╤╤╤╤╤╤╤╝ ┇
 // ┇____________┇
 // แสดงกระดานใน terminal
@@ -247,43 +246,43 @@ string toUpperStr(string x){
     return y;
 }
 ///////////////////////////////////////////ของฟิว//////New create/////////////////////////////
-void action(Player &currP,int turn,const string filename,Random two,Random one){
+void action(Player &currP,int &turn ,Random turnFunc){
     string input;
+    char format[] = "%d %d %d";
+    int slot=0, attack=0, health=0;
     
     cout << "[" << currP.name << "]: ";
     cin >> input;
 
-    if(turn == 1){
-        two.importcard(filename,2);
-
-    }
-    else{
-        one.importcard(filename,1);
-    }
-
+     // if(turn == 1){
+    //     two.importcard(filename,2);
+    // }
+    // else{
+    //     one.importcard(filename,1);
+    // }
     
     if(toUpperStr(input) == "SKIP") return;
     
-    // else if(toUpperStr(input) == "ADD"){
-    //     cin.ignore();
-    //     getline(cin, input);
-    //     sscanf(input.c_str(), format, &slot, &attack, &health);
-    //     if(input.empty() || cin.bad()){
-    //         cout << "[!] \"add\" command requires you to enter all of the three inputs \"add (slot) (attack) (health)\". Please check your command.\n";
-    //         action(currP,turn,filename,two,one);
-    //     }
-    //     else if(slot > scale || slot < 1){
-    //         cout << "[!] There are only " << scale << " slots. Please check your command.\n";
-    //         action(currP,turn,filename,two,one);
-    //     }
-    //     else if(health <= 0){
-    //         cout << "[!] Health can't be zero or negative number. Please check your command.\n";
-    //         action(currP,turn,filename,two,one);
-    //     }
-    //     else{
-    //         currP.slots[slot-1].create(attack, health);
-    //     }
-    // }
+    else if(toUpperStr(input) == "ADD"){
+        cin.ignore();
+        getline(cin, input);
+        sscanf(input.c_str(), format, &slot, &attack, &health);
+        if(input.empty() || cin.bad()){
+            cout << "[!] \"add\" command requires you to enter all of the three inputs \"add (slot) (attack) (health)\". Please check your command.\n";
+            action(currP,turn,turnFunc);
+        }
+        else if(slot > scale || slot < 1){
+            cout << "[!] There are only " << scale << " slots. Please check your command.\n";
+            action(currP,turn,turnFunc);
+        }
+        else if(health <= 0){
+            cout << "[!] Health can't be zero or negative number. Please check your command.\n";
+            action(currP,turn,turnFunc);
+        }
+        else{
+            currP.slots[slot-1].create(attack, health);
+        }
+    }
     
     else if(toUpperStr(input) == "END"){
         cout << "[!] Game ended by user.";
@@ -292,11 +291,10 @@ void action(Player &currP,int turn,const string filename,Random two,Random one){
     
     else{
         cout << "[!] Invalid command. Write \"add (slot) (attack) (health)\" to create a unit, \"skip\" to skip or \"End\" to to end the game.\n"; // สำหรับถ้าพิมพ์คำสั่งมาผิด
-        action(currP,turn,filename,two,one);
+        action(currP,turn,turnFunc);
     }
     cout << "\n";
 }
-
 ///////////////////////////////////////////////ของฟิวถึงนี่//////////////////////////////////////////////////
 // สั่งให้ unit ทุกช่องสู้กัน
 void combat(Player &first, Player &second){
@@ -308,33 +306,34 @@ void combat(Player &first, Player &second){
 
 int main()
 {
-    int turn = 1; 
     string filename = "Namecard.txt";
     vector<string> nameVector;
     vector<int> atkVector,hpVector;
     Random random;
     Random name1, attack1, health1;
     Random name2, attack2, health2;
-    Random two,one;
+    Random turnFunc;
+    random.importcard(filename);
     
-    random.importcard(filename,turn);
-    
-    name1.importcard(filename,turn);
-    attack1.importcard(filename,turn);
-    health1.importcard(filename,turn);
+    name1.importcard(filename);
+    attack1.importcard(filename);
+    health1.importcard(filename);
 
-    name2.importcard(filename,turn);
-    attack2.importcard(filename,turn);
-    health2.importcard(filename,turn);
+    name2.importcard(filename);
+    attack2.importcard(filename);
+    health2.importcard(filename);
 
+    turnFunc.importcard(filename);
+
+    int turn = 1; 
     Player p1, p2;
     p1.name = "P1"; p2.name = "P2"; // กำหนดค่า name สำหรับเอาไว้แสดง
     while(true){ 
         cout << "<<< Turn " << turn << " >>>\n";
         display(p1, p2, name1, attack1, health1, name2, attack2, health2);
-        action(p1,turn,filename,two,one);
+        action(p1,turn,turnFunc);
         display(p1, p2, name1, attack1, health1, name2, attack2, health2);
-        action(p2,turn,filename,two,one);
+        action(p2,turn,turnFunc);
         display(p1, p2, name1, attack1, health1, name2, attack2, health2);
         combat(p1, p2);
         cout << "\n";
