@@ -4,12 +4,13 @@
 #include<vector>
 #include<cstdlib>
 #include<iomanip>
+#include<windows.h>
 //ทำเผื่อๆ
 
 using namespace std; 
 
 int const scale = 4; // ขนาดของกระดาน(ลองเปลี่ยนได้)
-////////////New create//////////////////////////////ขอสไปรท์/////////////////////////////////////////
+////////////New create//////////////////////////////ขอสไปรท์////////////////////////////////////////
 //เหลือสร้างclassเก็บค่าที่สุ่มออกมา
 class Random {
     string file;
@@ -18,9 +19,14 @@ class Random {
     vector<int> hps;     
     
 public:
-    string sum_name[scale]; 
-    int sum_atk[scale];      
-    int sum_hp[scale];  
+    string sum_name1[scale]; 
+    int sum_atk1[scale];      
+    int sum_hp1[scale];
+    
+    string sum_name2[scale]; 
+    int sum_atk2[scale];      
+    int sum_hp2[scale];   
+   
     void importcard(const string filename);
 };
 
@@ -36,16 +42,37 @@ void Random::importcard(const string filename) {
         atks.push_back(attack);
         hps.push_back(health);
     }
-    int N = 3;
+    int N = 2, M = 4;
     for(int i = 0;i<N ;i++){
     int number1 = rand()% names.size();
-    int *num = new int(number1);
-    sum_name[i] = names[number1] ; 
-    sum_atk[i] = atks[number1] ; 
-    sum_hp[i] = hps[number1] ;
+    int *num1 = new int(number1);
+    sum_name1[i] = names[number1] ; 
+    sum_atk1[i] = atks[number1] ; 
+    sum_hp1[i] = hps[number1] ;
+    }
+    for(int i = 0;i<N ;i++){
+    int number2 = rand()% names.size();
+    int *num2 = new int(number2);
+    sum_name2[i] = names[number2] ; 
+    sum_atk2[i] = atks[number2] ; 
+    sum_hp2[i] = hps[number2] ;
+    }
 
-    delete num;
-  }
+    for(int i = 2;i<M ;i++){
+    int number1 = rand()% names.size();
+    int *num1 = new int(number1);
+    sum_name1[i] = "----------" ; 
+    sum_atk1[i] = 0 ; 
+    sum_hp1[i] = 0 ;
+    }
+
+    for(int i = 2;i<M ;i++){
+    int number2 = rand()% names.size();
+    int *num2 = new int(number2);
+    sum_name2[i] = "----------" ; 
+    sum_atk2[i] = 0 ; 
+    sum_hp2[i] = 0 ;
+    }
   //ทดสอบระบบ/////////
     // cout << sum_name[0] << "\n";
     // cout << sum_atk[0] << "\n";
@@ -102,6 +129,11 @@ void Player::attack(Player &target, int num){
 }
 /////////////////////////////////////pond/////////////////////////////////////////////////////////
 /////////////////////////////ของปอนด์เริ่มตรงนี้!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+void manys(const wchar_t specialChar) {
+    for (int N=1; N<135; N++)
+    wcout << specialChar;
+}
+
 void many(const wchar_t specialChar) {
     for (int N=1; N<9; N++)
     wcout << specialChar;
@@ -110,15 +142,27 @@ void many(const wchar_t specialChar) {
 void one(const wchar_t specialChar) {
     wcout << specialChar;
 }
-//  ____________
+//  ________
 // ┇✖  Gula   ✖┇
 // ┇ ╔╧╧╧╧╧╧╧╧╗ ┇
 // ┇⚔️ -<3>- ⚔️┇
-// ┇❤️️ -<4>- ❤️️┇
+// ┇❤️️ -<4>- ❤️️┇        
 // ┇ ╚╤╤╤╤╤╤╤╤╝ ┇
 // ┇____________┇
 // แสดงกระดานใน terminal
-void display(Player left, Player right,Random name1,Random attack1,Random health1){ 
+void display(Player left, Player right,Random name1,Random attack1,Random health1,Random name2,Random attack2,Random health2){ 
+        // cout << name1.sum_name1[0] << "\n";
+        // cout << attack1.sum_atk1[0] << "\n";
+        // cout << health1.sum_hp1[0] << "\n";
+
+        // cout << name2.sum_name2[0] << "\n";
+        // cout << attack2.sum_atk2[0] << "\n";
+        // cout << health2.sum_hp2[0] << "\n";
+
+    HANDLE Color = GetStdHandle(STD_OUTPUT_HANDLE);
+        SetConsoleTextAttribute(Color,5);
+        cout << "Check" << endl;
+
 
     wchar_t F = L'\u00CF'; // ใช้รหัส Unicode
     wchar_t G = L'\u00D1';
@@ -126,6 +170,10 @@ void display(Player left, Player right,Random name1,Random attack1,Random health
     wchar_t B = L'\u00BB';
     wchar_t C = L'\u00C8';
     wchar_t D = L'\u00BC';
+    wchar_t E = L'\u00ED';
+    wchar_t I = L'\u00DF';
+    wchar_t ATK = L'\u0041';
+    wchar_t HP = L'\u2665';
     
     // one(A);
     // many(F);
@@ -134,16 +182,34 @@ void display(Player left, Player right,Random name1,Random attack1,Random health
     // one(C);
     // many(G);
     // one(D);
+    // one(HP);
     cout << endl;
-    cout << "====================================================================================================================================\n";
+    manys(I);
+    cout << endl;
+    SetConsoleTextAttribute(Color,14);
+    // cout << "====================================================================================================================================\n";
     for(int i=0; i<scale; i++){
         // cout << "|    " << left.slots[i].txt << "     <->     " << right.slots[i].txt << "    |\n"; // วนแสดง unit ที่อยู่ในแต่ละช่อง
-        cout << name1.sum_name[i]<< endl;
-        cout << attack1.sum_atk[i]<<endl;
-        cout << health1.sum_hp[i]<<endl;
+        // cout << name1.sum_name[i]<< endl;
+        // cout << attack1.sum_atk[i]<<endl;
+        // cout << health1.sum_hp[i]<<endl;
+        string N1 = name1.sum_name1[i];
+        string N2 = name2.sum_name2[i];
+        int A1 = attack1.sum_atk1[i];
+        int A2 = attack2.sum_atk2[i];
+        int H1 = health1.sum_hp1[0];
+        int H2 = health2.sum_hp2[0];
         cout << "          ";
         cout <<             " ____________" << "                                                                                        " << "____________";
-        cout << "\n          |     ZX     |" << "                                                                                      " << "|            |";
+        cout << "\n          |";
+        one(E);
+        cout << N1;
+        one(E);     
+        cout << "|" << "                                                                                      " << "|";
+        one(E);
+        cout << N2;
+        one(E);
+        cout << "|";
         cout << "\n          | ";
         one(A);
         many(F);
@@ -153,8 +219,8 @@ void display(Player left, Player right,Random name1,Random attack1,Random health
         many(F);
         one(B);
         cout << " |";
-        cout << "\n          |            |" << "                                                                                      " << "|            |";
-        cout << "\n          |            |" << "                                                                                      " << "|            |";
+        cout << "\n          |   -<" << A1 <<  ">-    |" << "                                                                                      " << "|   -<" << A2 <<  ">-    |";
+        cout << "\n          |   -<" << H1 <<  ">-    |" << "                                                                                      " << "|   -<" << H2 <<  ">-    |";
         cout << "\n          | ";
         one(C);
         many(G);
@@ -166,9 +232,13 @@ void display(Player left, Player right,Random name1,Random attack1,Random health
         cout << " |";
         cout << "\n          |____________|" << "                                                                                      " << "|____________|\n";
     }
-    cout << "_________________________________\n";
-    cout << "|    " << left.name << "<" << left.hp << ">            " << right.name << "<" << right.hp << ">   |\n"; // บรรทัดสำหรับแสดงค่า hp
-    cout << "====================================================================================================================================\n";
+    cout << endl;
+    SetConsoleTextAttribute(Color,5);
+    manys(I);
+    cout << endl;
+    // cout << "_________________________________\n";
+    cout << "|    " << left.name << "<" << left.hp << ">                                                                                                               " << right.name << "<" << right.hp << ">   |\n"; // บรรทัดสำหรับแสดงค่า hp
+    cout << "======================================================================================================================================\n";
 }
 
 string toUpperStr(string x){
@@ -177,31 +247,52 @@ string toUpperStr(string x){
     return y;
 }
 ///////////////////////////////////////////ของฟิว//////New create/////////////////////////////
-void action(Player &currP){
+void action(Player &currP,int &turn ,Random turnFunc){
     string input;
-    int slot, attack, health;
+    char format[] = "%d %d %d";
+    int slot=0, attack=0, health=0;
     
     cout << "[" << currP.name << "]: ";
     cin >> input;
+
+     // if(turn == 1){
+    //     two.importcard(filename,2);
+    // }
+    // else{
+    //     one.importcard(filename,1);
+    // }
     
     if(toUpperStr(input) == "SKIP") return;
+    
     else if(toUpperStr(input) == "ADD"){
-        cout << "Choose a slot(1-" << scale << "): "; // ถามว่าจะใส่ช่องไหน
-        cin >> slot;
-        while(slot<=0 || slot>5 ){
-            cout << "[!] Invalid command.\nPlease choose a slot(1-" << scale << "): ";
-            cin >> slot;
-
+        cin.ignore();
+        getline(cin, input);
+        sscanf(input.c_str(), format, &slot, &attack, &health);
+        if(input.empty() || cin.bad()){
+            cout << "[!] \"add\" command requires you to enter all of the three inputs \"add (slot) (attack) (health)\". Please check your command.\n";
+            action(currP,turn,turnFunc);
         }
-        cout << "Enter your stat: "; // ถามว่าจะให้ stat เป็นเท่าไหร่ 
-        cin >> attack >> health;
-        currP.slots[slot-1].create(attack, health); // Update unit ในช่องนั้นให้มีค่าตามที่ใส่
-
+        else if(slot > scale || slot < 1){
+            cout << "[!] There are only " << scale << " slots. Please check your command.\n";
+            action(currP,turn,turnFunc);
+        }
+        else if(health <= 0){
+            cout << "[!] Health can't be zero or negative number. Please check your command.\n";
+            action(currP,turn,turnFunc);
+        }
+        else{
+            currP.slots[slot-1].create(attack, health);
+        }
     }
-    else if(toUpperStr(input) == "EXIT") return;
+    
+    else if(toUpperStr(input) == "END"){
+        cout << "[!] Game ended by user.";
+        exit(0);
+    }
+    
     else{
-        cout << "[!] Invalid command. Write \"add\" to create a unit or \"skip\" to skip or \"End\" to to end the game.\n"; // สำหรับถ้าพิมพ์คำสั่งมาผิด
-        action(currP);
+        cout << "[!] Invalid command. Write \"add (slot) (attack) (health)\" to create a unit, \"skip\" to skip or \"End\" to to end the game.\n"; // สำหรับถ้าพิมพ์คำสั่งมาผิด
+        action(currP,turn,turnFunc);
     }
     cout << "\n";
 }
@@ -273,21 +364,30 @@ int main()
     vector<int> atkVector,hpVector;
     Random random;
     Random name1, attack1, health1;
+    Random name2, attack2, health2;
+    Random turnFunc;
     random.importcard(filename);
+    
     name1.importcard(filename);
     attack1.importcard(filename);
     health1.importcard(filename);
+
+    name2.importcard(filename);
+    attack2.importcard(filename);
+    health2.importcard(filename);
+
+    turnFunc.importcard(filename);
 
     int turn = 1; 
     Player p1, p2;
     p1.name = "P1"; p2.name = "P2"; // กำหนดค่า name สำหรับเอาไว้แสดง
     while(true){ 
         cout << "<<< Turn " << turn << " >>>\n";
-        display(p1, p2, name1, attack1, health1);
-        action(p1);
-        display(p1, p2, name1, attack1, health1);
-        action(p2);
-        display(p1, p2, name1, attack1, health1);
+        display(p1, p2, name1, attack1, health1, name2, attack2, health2);
+        action(p1,turn,turnFunc);
+        display(p1, p2, name1, attack1, health1, name2, attack2, health2);
+        action(p2,turn,turnFunc);
+        display(p1, p2, name1, attack1, health1, name2, attack2, health2);
         combat(p1, p2);
         cout << "\n";
         /////////////////////////////////////////////////////////////////////////
