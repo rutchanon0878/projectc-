@@ -312,27 +312,48 @@ bool Player::isDead(){
 }
 
 void p1Win(){
-    cout<<"---------------------------------"<<endl;
-    for(int i = 0; i<1; i++) cout<<"|                              |"<<endl;
-    cout<<"|          P1 win!!!!          |"<<endl;
-    for(int i = 0; i<1; i++) cout<<"|                              |"<<endl;
-    cout<<"---------------------------------";
+    cout << endl;
+    HANDLE Color = GetStdHandle(STD_OUTPUT_HANDLE);
+    SetConsoleTextAttribute(Color,5);
+    cout<<"======================================================================================================================================";
+    cout << endl;
+    SetConsoleTextAttribute(Color,14);
+    cout<<"||                                                                                                                                  ||"<<endl;
+    cout<<"||                                                       !!! P1 win !!!!                                                            ||"<<endl;
+    cout<<"||                                                                                                                                  ||"<<endl;
+    SetConsoleTextAttribute(Color,5);
+    cout<<"======================================================================================================================================";
+    cout << endl;
 }
 
 void p2Win(){
-    cout<<"--------------------------------"<<endl;
-    for(int i = 0; i<1; i++) cout<<"|                              |"<<endl;
-    cout<<"|          P2 win!!!!          |"<<endl;
-    for(int i = 0; i<1; i++) cout<<"|                              |"<<endl;
-    cout<<"--------------------------------";
+    cout << endl;
+    HANDLE Color = GetStdHandle(STD_OUTPUT_HANDLE);
+    SetConsoleTextAttribute(Color,5);
+    cout<<"======================================================================================================================================";
+    cout << endl;
+    SetConsoleTextAttribute(Color,14);
+    cout<<"||                                                                                                                                  ||"<<endl;
+    cout<<"||                                                       !!! P2 win !!!!                                                            ||"<<endl;
+    cout<<"||                                                                                                                                  ||"<<endl;
+    SetConsoleTextAttribute(Color,5);
+    cout<<"======================================================================================================================================";
+    cout << endl;
 }
 
 void bothwin(){
-    cout<<"--------------------------------"<<endl;
-    for(int i = 0; i<1; i++) cout<<"|                              |"<<endl;
-    cout<<"|            Draw...          |"<<endl;
-    for(int i = 0; i<1; i++) cout<<"|                              |"<<endl;
-    cout<<"--------------------------------";
+    cout << endl;
+    HANDLE Color = GetStdHandle(STD_OUTPUT_HANDLE);
+    SetConsoleTextAttribute(Color,5);
+    cout<<"======================================================================================================================================";
+    cout << endl;
+    SetConsoleTextAttribute(Color,14);
+    cout<<"||                                                                                                                                  ||"<<endl;
+    cout<<"||                                                      !!! Both win !!!!                                                           ||"<<endl;
+    cout<<"||                                                                                                                                  ||"<<endl;
+    SetConsoleTextAttribute(Color,5);
+    cout<<"======================================================================================================================================";
+    cout << endl;
 }
 ////////////////////////////////// ยังมีใน main อีก ///////////////////////////
 
