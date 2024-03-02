@@ -10,6 +10,7 @@
 using namespace std; 
 
 int const scale = 4; // ขนาดของกระดาน(ลองเปลี่ยนได้)
+int turn = 1; 
 ////////////New create//////////////////////////////ขอสไปรท์////////////////////////////////////////
 //เหลือสร้างclassเก็บค่าที่สุ่มออกมา
 class Random {
@@ -42,45 +43,53 @@ void Random::importcard(const string filename) {
         atks.push_back(attack);
         hps.push_back(health);
     }
-    int N = 2, M = 4;
-    for(int i = 0;i<N ;i++){
+    if(turn == 1){
+    for(int i = 0;i<2 ;i++){
     int number1 = rand()% names.size();
     int *num1 = new int(number1);
     sum_name1[i] = names[number1] ; 
     sum_atk1[i] = atks[number1] ; 
     sum_hp1[i] = hps[number1] ;
     }
-    for(int i = 0;i<N ;i++){
+    for(int i = 0;i<2 ;i++){
     int number2 = rand()% names.size();
     int *num2 = new int(number2);
     sum_name2[i] = names[number2] ; 
     sum_atk2[i] = atks[number2] ; 
     sum_hp2[i] = hps[number2] ;
     }
-
-    for(int i = 2;i<M ;i++){
+    for(int i = 0;i<4 ;i++){
     int number1 = rand()% names.size();
     int *num1 = new int(number1);
     sum_name1[i] = "----------" ; 
     sum_atk1[i] = 0 ; 
     sum_hp1[i] = 0 ;
     }
-
-    for(int i = 2;i<M ;i++){
+    for(int i = 0;i<4 ;i++){
     int number2 = rand()% names.size();
     int *num2 = new int(number2);
     sum_name2[i] = "----------" ; 
     sum_atk2[i] = 0 ; 
     sum_hp2[i] = 0 ;
     }
-  //ทดสอบระบบ/////////
-    // cout << sum_name[0] << "\n";
-    // cout << sum_atk[0] << "\n";
-    // cout << sum_hp[0] << "\n";
-
-    // cout << sum_name[1] << "\n";
-    // cout << sum_atk[1] << "\n";
-    // cout << sum_hp[1] << "\n";
+}
+else{
+    int N = 3;
+    for(int i = 2;i<N ;i++){
+    int number1 = rand()% names.size();
+    int *num1 = new int(number1);
+    sum_name1[i] = names[number1] ; 
+    sum_atk1[i] = atks[number1] ; 
+    sum_hp1[i] = hps[number1] ;
+    }
+    for(int i = 2;i<N ;i++){
+    int number2 = rand()% names.size();
+    int *num2 = new int(number2);
+    sum_name2[i] = names[number2] ; 
+    sum_atk2[i] = atks[number2] ; 
+    sum_hp2[i] = hps[number2] ;
+    }
+}
 }
 
 ////////////End//////////////////////////////ของสไปรท์ถึงนี่////////////////////////////////////////////////
@@ -142,14 +151,7 @@ void many(const wchar_t specialChar) {
 void one(const wchar_t specialChar) {
     wcout << specialChar;
 }
-//  ________
-// ┇✖  Gula   ✖┇
-// ┇ ╔╧╧╧╧╧╧╧╧╗ ┇
-// ┇⚔️ -<3>- ⚔️┇
-// ┇❤️️ -<4>- ❤️️┇        
-// ┇ ╚╤╤╤╤╤╤╤╤╝ ┇
-// ┇____________┇
-// แสดงกระดานใน terminal
+
 void display(Player left, Player right,Random name1,Random attack1,Random health1,Random name2,Random attack2,Random health2){ 
         // cout << name1.sum_name1[0] << "\n";
         // cout << attack1.sum_atk1[0] << "\n";
