@@ -257,12 +257,6 @@ void action(Player &currP,int &turn ,Random turnFunc){
     cout << "[" << currP.name << "]: ";
     cin >> input;
 
-     // if(turn == 1){
-    //     two.importcard(filename,2);
-    // }
-    // else{
-    //     one.importcard(filename,1);
-    // }
     
     if(toUpperStr(input) == "SKIP") return;
     
@@ -387,8 +381,10 @@ int main()
         cout << "<<< Turn " << turn << " >>>\n";
         display(p1, p2, name1, attack1, health1, name2, attack2, health2);
         action(p1,turn,turnFunc);
+
         display(p1, p2, name1, attack1, health1, name2, attack2, health2);
         action(p2,turn,turnFunc);
+
         display(p1, p2, name1, attack1, health1, name2, attack2, health2);
         combat(p1, p2);
         cout << "\n";
