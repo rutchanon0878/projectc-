@@ -10,6 +10,7 @@
 using namespace std; 
 
 int const scale = 4; // ขนาดของกระดาน(ลองเปลี่ยนได้)
+int turn = 1; 
 ////////////New create//////////////////////////////ขอสไปรท์/////////////////////////////////////////
 //เหลือสร้างclassเก็บค่าที่สุ่มออกมา
 class Random {
@@ -42,7 +43,39 @@ void Random::importcard(const string filename) {
         atks.push_back(attack);
         hps.push_back(health);
     }
-    int N = 2, M = 4;
+    
+if(turn == 1){
+    for(int i = 0;i<2 ;i++){
+    int number1 = rand()% names.size();
+    int *num1 = new int(number1);
+    sum_name1[i] = names[number1] ; 
+    sum_atk1[i] = atks[number1] ; 
+    sum_hp1[i] = hps[number1] ;
+    }
+    for(int i = 0;i<2 ;i++){
+    int number2 = rand()% names.size();
+    int *num2 = new int(number2);
+    sum_name2[i] = names[number2] ; 
+    sum_atk2[i] = atks[number2] ; 
+    sum_hp2[i] = hps[number2] ;
+    }
+    for(int i = 0;i<4 ;i++){
+    int number1 = rand()% names.size();
+    int *num1 = new int(number1);
+    sum_name1[i] = "----------" ; 
+    sum_atk1[i] = 0 ; 
+    sum_hp1[i] = 0 ;
+    }
+    for(int i = 0;i<4 ;i++){
+    int number2 = rand()% names.size();
+    int *num2 = new int(number2);
+    sum_name2[i] = "----------" ; 
+    sum_atk2[i] = 0 ; 
+    sum_hp2[i] = 0 ;
+    }
+}
+else{
+    int N = 1;
     for(int i = 0;i<N ;i++){
     int number1 = rand()% names.size();
     int *num1 = new int(number1);
@@ -57,30 +90,19 @@ void Random::importcard(const string filename) {
     sum_atk2[i] = atks[number2] ; 
     sum_hp2[i] = hps[number2] ;
     }
+}
 
-    for(int i = 2;i<M ;i++){
-    int number1 = rand()% names.size();
-    int *num1 = new int(number1);
-    sum_name1[i] = "----------" ; 
-    sum_atk1[i] = 0 ; 
-    sum_hp1[i] = 0 ;
-    }
 
-    for(int i = 2;i<M ;i++){
-    int number2 = rand()% names.size();
-    int *num2 = new int(number2);
-    sum_name2[i] = "----------" ; 
-    sum_atk2[i] = 0 ; 
-    sum_hp2[i] = 0 ;
-    }
-  //ทดสอบระบบ/////////
-    // cout << sum_name[0] << "\n";
-    // cout << sum_atk[0] << "\n";
-    // cout << sum_hp[0] << "\n";
+// //// ทดสอบระบบ/////////
+//     cout << sum_name1[0] << "\n";
+//     cout << sum_atk1[0] << "\n";
+//     cout << sum_hp1[0] << "\n";
 
-    // cout << sum_name[1] << "\n";
-    // cout << sum_atk[1] << "\n";
-    // cout << sum_hp[1] << "\n";
+//     cout << sum_name1[1] << "\n";
+//     cout << sum_atk1[1] << "\n";
+//     cout << sum_hp1[1] << "\n";
+
+    
 }
 
 ////////////End//////////////////////////////ของสไปรท์ถึงนี่////////////////////////////////////////////////
@@ -196,8 +218,8 @@ void display(Player left, Player right,Random name1,Random attack1,Random health
         string N2 = name2.sum_name2[i];
         int A1 = attack1.sum_atk1[i];
         int A2 = attack2.sum_atk2[i];
-        int H1 = health1.sum_hp1[0];
-        int H2 = health2.sum_hp2[0];
+        int H1 = health1.sum_hp1[i];
+        int H2 = health2.sum_hp2[i];
         cout << "          ";
         cout <<             " ____________" << "                                                                                        " << "____________";
         cout << "\n          |";
@@ -323,7 +345,6 @@ int main()
 
     turnFunc.importcard(filename);
 
-    int turn = 1; 
     Player p1, p2;
     p1.name = "P1"; p2.name = "P2"; // กำหนดค่า name สำหรับเอาไว้แสดง
     while(true){ 
