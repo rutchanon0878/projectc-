@@ -9,8 +9,12 @@
 
 using namespace std; 
 
+class Random;
+class Player;
+class Unit;
 int const scale = 4; // ขนาดของกระดาน(ลองเปลี่ยนได้)
-////////////New create//////////////////////////////ขอสไปรท์/////////////////////////////////////////
+int turn = 1; 
+////////////New create//////////////////////////////ขอสไปรท์////////////////////////////////////////
 //เหลือสร้างclassเก็บค่าที่สุ่มออกมา
 class Random {
     string file;
@@ -28,6 +32,7 @@ public:
     int sum_hp2[scale];   
    
     void importcard(const string filename);
+    void action(Player &,int &);
 };
 
 void Random::importcard(const string filename) {
@@ -42,45 +47,20 @@ void Random::importcard(const string filename) {
         atks.push_back(attack);
         hps.push_back(health);
     }
-    int N = 2, M = 4;
-    for(int i = 0;i<N ;i++){
-    int number1 = rand()% names.size();
-    int *num1 = new int(number1);
-    sum_name1[i] = names[number1] ; 
-    sum_atk1[i] = atks[number1] ; 
-    sum_hp1[i] = hps[number1] ;
-    }
-    for(int i = 0;i<N ;i++){
-    int number2 = rand()% names.size();
-    int *num2 = new int(number2);
-    sum_name2[i] = names[number2] ; 
-    sum_atk2[i] = atks[number2] ; 
-    sum_hp2[i] = hps[number2] ;
-    }
-
-    for(int i = 2;i<M ;i++){
+    for(int i = 0;i<4 ;i++){
     int number1 = rand()% names.size();
     int *num1 = new int(number1);
     sum_name1[i] = "----------" ; 
     sum_atk1[i] = 0 ; 
     sum_hp1[i] = 0 ;
     }
-
-    for(int i = 2;i<M ;i++){
+    for(int i = 0;i<4 ;i++){
     int number2 = rand()% names.size();
     int *num2 = new int(number2);
     sum_name2[i] = "----------" ; 
     sum_atk2[i] = 0 ; 
     sum_hp2[i] = 0 ;
     }
-  //ทดสอบระบบ/////////
-    // cout << sum_name[0] << "\n";
-    // cout << sum_atk[0] << "\n";
-    // cout << sum_hp[0] << "\n";
-
-    // cout << sum_name[1] << "\n";
-    // cout << sum_atk[1] << "\n";
-    // cout << sum_hp[1] << "\n";
 }
 
 ////////////End//////////////////////////////ของสไปรท์ถึงนี่////////////////////////////////////////////////
@@ -118,6 +98,7 @@ class Player{
         string name;                  // ชื่อไว้สำหรับแสดง
         Unit slots[scale];           // ← ค่า Unit ของแต่ละคนเก็บไว้ที่ตัวนี้
         void attack(Player &, int); // สั่งให้ unit ในช่องที่เลือกโจมตี unit ของฝ่ายตรงข้ามในช่องเดียวกัน
+        bool isDead();
 };
 
 void Player::attack(Player &target, int num){
@@ -141,22 +122,8 @@ void many(const wchar_t specialChar) {
 void one(const wchar_t specialChar) {
     wcout << specialChar;
 }
-//  ________
-// ┇✖  Gula   ✖┇
-// ┇ ╔╧╧╧╧╧╧╧╧╗ ┇
-// ┇⚔️ -<3>- ⚔️┇
-// ┇❤️️ -<4>- ❤️️┇        
-// ┇ ╚╤╤╤╤╤╤╤╤╝ ┇
-// ┇____________┇
-// แสดงกระดานใน terminal
-void display(Player left, Player right,Random name1,Random attack1,Random health1,Random name2,Random attack2,Random health2){ 
-        // cout << name1.sum_name1[0] << "\n";
-        // cout << attack1.sum_atk1[0] << "\n";
-        // cout << health1.sum_hp1[0] << "\n";
 
-        // cout << name2.sum_name2[0] << "\n";
-        // cout << attack2.sum_atk2[0] << "\n";
-        // cout << health2.sum_hp2[0] << "\n";
+void display(Player left, Player right,Random name1,Random attack1,Random health1,Random name2,Random attack2,Random health2){ 
 
     HANDLE Color = GetStdHandle(STD_OUTPUT_HANDLE);
         SetConsoleTextAttribute(Color,5);
@@ -188,10 +155,6 @@ void display(Player left, Player right,Random name1,Random attack1,Random health
     SetConsoleTextAttribute(Color,14);
     // cout << "====================================================================================================================================\n";
     for(int i=0; i<scale; i++){
-        // cout << "|    " << left.slots[i].txt << "     <->     " << right.slots[i].txt << "    |\n"; // วนแสดง unit ที่อยู่ในแต่ละช่อง
-        // cout << name1.sum_name[i]<< endl;
-        // cout << attack1.sum_atk[i]<<endl;
-        // cout << health1.sum_hp[i]<<endl;
         string N1 = name1.sum_name1[i];
         string N2 = name2.sum_name2[i];
         int A1 = attack1.sum_atk1[i];
@@ -246,7 +209,7 @@ string toUpperStr(string x){
     return y;
 }
 ///////////////////////////////////////////ของฟิว//////New create/////////////////////////////
-void action(Player &currP,int &turn ,Random turnFunc){
+void Random::action(Player &currP,int &turn){
     string input;
     char format[] = "%d %d %d";
     int slot=0, attack=0, health=0;
@@ -254,44 +217,49 @@ void action(Player &currP,int &turn ,Random turnFunc){
     cout << "[" << currP.name << "]: ";
     cin >> input;
 
-     // if(turn == 1){
-    //     two.importcard(filename,2);
-    // }
-    // else{
-    //     one.importcard(filename,1);
-    // }
     
     if(toUpperStr(input) == "SKIP") return;
     
     else if(toUpperStr(input) == "ADD"){
-        cin.ignore();
-        getline(cin, input);
-        sscanf(input.c_str(), format, &slot, &attack, &health);
+            if(turn == 1){
+                for(int i = 0;i<2 ;i++){
+                int number1 = rand()% names.size();
+                int *num1 = new int(number1);
+                sum_name1[i] = names[number1] ; 
+                sum_atk1[i] = atks[number1] ; 
+                sum_hp1[i] = hps[number1] ;
+                }
+                }else{
+                int N = 3;
+                for(int i = 2;i<N ;i++){
+                int number1 = rand()% names.size();
+                int *num1 = new int(number1);
+                sum_name1[i] = names[number1] ; 
+                sum_atk1[i] = atks[number1] ; 
+                sum_hp1[i] = hps[number1] ;
+                }
+                }
+}
         if(input.empty() || cin.bad()){
             cout << "[!] \"add\" command requires you to enter all of the three inputs \"add (slot) (attack) (health)\". Please check your command.\n";
-            action(currP,turn,turnFunc);
-        }
-        else if(slot > scale || slot < 1){
-            cout << "[!] There are only " << scale << " slots. Please check your command.\n";
-            action(currP,turn,turnFunc);
+            action(currP,turn);
         }
         else if(health <= 0){
             cout << "[!] Health can't be zero or negative number. Please check your command.\n";
-            action(currP,turn,turnFunc);
+            action(currP,turn);
         }
         else{
             currP.slots[slot-1].create(attack, health);
         }
-    }
-    
-    else if(toUpperStr(input) == "END"){
+
+    if(toUpperStr(input) == "END"){
         cout << "[!] Game ended by user.";
         exit(0);
     }
     
     else{
         cout << "[!] Invalid command. Write \"add (slot) (attack) (health)\" to create a unit, \"skip\" to skip or \"End\" to to end the game.\n"; // สำหรับถ้าพิมพ์คำสั่งมาผิด
-        action(currP,turn,turnFunc);
+        action(currP,turn);
     }
     cout << "\n";
 }
@@ -303,6 +271,58 @@ void combat(Player &first, Player &second){
         second.attack(first, i);
     }
 }
+
+////////////////////////////////// ของเวสป้า ///////////////////////////
+bool Player::isDead(){
+    if(hp <= 0) return true;
+    else false;
+}
+
+void p1Win(){
+    cout << endl;
+    HANDLE Color = GetStdHandle(STD_OUTPUT_HANDLE);
+    SetConsoleTextAttribute(Color,5);
+    cout<<"======================================================================================================================================";
+    cout << endl;
+    SetConsoleTextAttribute(Color,14);
+    cout<<"||                                                                                                                                  ||"<<endl;
+    cout<<"||                                                       !!! P1 win !!!!                                                            ||"<<endl;
+    cout<<"||                                                                                                                                  ||"<<endl;
+    SetConsoleTextAttribute(Color,5);
+    cout<<"======================================================================================================================================";
+    cout << endl;
+}
+
+void p2Win(){
+    cout << endl;
+    HANDLE Color = GetStdHandle(STD_OUTPUT_HANDLE);
+    SetConsoleTextAttribute(Color,5);
+    cout<<"======================================================================================================================================";
+    cout << endl;
+    SetConsoleTextAttribute(Color,14);
+    cout<<"||                                                                                                                                  ||"<<endl;
+    cout<<"||                                                       !!! P2 win !!!!                                                            ||"<<endl;
+    cout<<"||                                                                                                                                  ||"<<endl;
+    SetConsoleTextAttribute(Color,5);
+    cout<<"======================================================================================================================================";
+    cout << endl;
+}
+
+void bothwin(){
+    cout << endl;
+    HANDLE Color = GetStdHandle(STD_OUTPUT_HANDLE);
+    SetConsoleTextAttribute(Color,5);
+    cout<<"======================================================================================================================================";
+    cout << endl;
+    SetConsoleTextAttribute(Color,14);
+    cout<<"||                                                                                                                                  ||"<<endl;
+    cout<<"||                                                      !!! Both win !!!!                                                           ||"<<endl;
+    cout<<"||                                                                                                                                  ||"<<endl;
+    SetConsoleTextAttribute(Color,5);
+    cout<<"======================================================================================================================================";
+    cout << endl;
+}
+////////////////////////////////// ยังมีใน main อีก ///////////////////////////
 
 int main()
 {
@@ -331,14 +351,22 @@ int main()
     while(true){ 
         cout << "<<< Turn " << turn << " >>>\n";
         display(p1, p2, name1, attack1, health1, name2, attack2, health2);
-        action(p1,turn,turnFunc);
+        turnFunc.action(p1,turn);
+
         display(p1, p2, name1, attack1, health1, name2, attack2, health2);
-        action(p2,turn,turnFunc);
+        turnFunc.action(p2,turn);
+
         display(p1, p2, name1, attack1, health1, name2, attack2, health2);
         combat(p1, p2);
         cout << "\n";
-        turn++;
+        /////////////////////////////////////////////////////////////////////////
+        if(p1.hp <= 0 || p2.hp <= 0) break;
         // วนลูปสลับไปเรื่อยๆยังไม่ได้เขียนโค้ดส่วนชนะ
+        turn++;
     }
+    if(p1.hp == p2.hp) bothwin();
+    else if(p1.isDead()) p1Win();
+    else p2Win();
+    //////////////////////////////////////// ของเวสป้าถึงตรงนี้ ///////////////////////////////
     return 0;
 }

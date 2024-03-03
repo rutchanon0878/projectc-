@@ -1,258 +1,289 @@
-#include<iostream>
-#include<string>
-#include<fstream>
-#include<vector>
-#include<cstdlib>
-#include<iomanip>
-#include<windows.h>
-#include"game (1).h"
-
-//ทำเผื่อๆ
+#include <iostream>
+#include <fstream>
+#include <vector>
+#include <cstdlib>
+#include <ctime>
+#include <iomanip>
+#include <algorithm> // เพิ่มไฟล์ header นี้
 
 using namespace std;
 
-int const scale = 4; // ขนาดของกระดาน(ลองเปลี่ยนได้)
-int turn = 1; 
+const int scale = 4;
 
-// <- Add header here! <game.h>
+class Random;
+void GetEnter();
 
-/////////////////////////////////////pond/////////////////////////////////////////////////////////
-/////////////////////////////ของปอนด์เริ่มตรงนี้!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+class Unit
+{
+public:
+    int hp = 0;
+    int atk = 0;
+    string txt = " (x) ";
 
-void manys(const wchar_t);
-void many(const wchar_t);
-void one(const wchar_t);
-void display(Player, Player);
-string toUpperStr(string);
-void action(Player &, Deck);
-void combat(Player &, Player &)
-void win(string);
+    void txtUpdate();
+    void create(int, int);
+    void damaged(int);
+};
+
+void Unit::txtUpdate()
+{
+    if (hp > 0)
+        txt = "[" + to_string(atk) + "/" + to_string(hp) + "]";
+    else
+        txt = " (x) ";
+}
+
+void Unit::create(int attack, int health)
+{
+    atk = attack;
+    hp = health;
+    txtUpdate();
+}
+
+void Unit::damaged(int amount)
+{
+    hp -= amount;
+    hp = (hp < 0) ? 0 : hp;
+    txtUpdate();
+}
+
+class Player
+{
+public:
+    int hp = 10;
+    string name;
+    Unit slots[scale];
+
+    void attack(Player &);
+    bool isDead();
+    void action(Random &, int turn);
+    int getTotalHp(); // Calculate total HP of all slots
+};
+
+class Random
+{
+private:
+    vector<string> names;
+    vector<int> atks;
+    vector<int> hps;
+
+public:
+    void importCard(const string filename);
+    void dealCards(Player &, int index);
+};
+
+void Player::action(Random &random, int turn)
+{
+    bool action = true;
+    string input;
+    int cardsToAdd = (turn == 1) ? 2 : 1; // Adjust cards to add based on turn number
+    int addCount = 0;                     // Track the number of times "add" action is used
+    while (action)
+    {
+        cout << "[" << name << "]: ";
+        cout << " Your Action : ";
+        cin >> input;
+        // แปลง input เป็นตัวพิมพ์เล็กทั้งหมด
+        transform(input.begin(), input.end(), input.begin(), ::tolower);
+        if (input == "add")
+        {
+            if (cardsToAdd > 0 && addCount < 2) // Allow "add" action only if cardsToAdd > 0 and addCount < 2
+            {
+                int index;
+                cout << "Where do you want to put the card (index 1-" << scale << "): ";
+                cin >> index;
+                if (index >= 1 && index <= scale)
+                {
+
+                    random.dealCards(*this, index - 1); // Deal card to the specified slot
+
+                    cardsToAdd--;
+                    addCount++;
+                }
+                else
+                {
+                    cout << "Invalid slot index. Please choose a slot index between 1 and " << scale << "." << endl;
+                }
+            }
+            else
+            {
+                cout << "You can't add more cards this turn!" << endl;
+                continue;
+            }
+        }
+        else if (input == "skip")
+        {
+            action = false;
+            cout << "Skipping turn for " << name << endl;
+        }
+        else
+        {
+            cout << "Invalid action! Please choose 'add' or 'skip'." << endl;
+            cin.ignore();
+            continue;
+        }
+    }
+}
+
+void Player::attack(Player &target)
+{
+    for (int i = 0; i < scale; ++i)
+    {
+        if (slots[i].hp <= target.slots[i].atk && slots[i].atk >= target.slots[i].hp)
+        {
+            slots[i].damaged(slots[i].hp);
+            target.slots[i].damaged(target.slots[i].hp);
+            // double death
+        }
+        else if (slots[i].hp > 0 && target.slots[i].hp > 0)
+        // Check if both slots have monsters before attacking
+        {
+            int P1atk = slots[i].atk;
+            int P2atk = target.slots[i].atk;
+            slots[i].damaged(P2atk);
+            target.slots[i].damaged(P1atk);
+        }
+        else
+        {
+            if (slots[i].hp > 0 && target.slots[i].hp <= 0)
+            {
+                target.hp -= slots[i].atk - target.slots[i].hp;
+            }
+            else if (slots[i].hp <= 0 && target.slots[i].hp > 0)
+            {
+                hp -= target.slots[i].atk - slots[i].hp;
+            }
+        }
+    }
+}
+
+bool Player::isDead()
+{
+    return hp <= 0;
+}
+
+void Random::importCard(const string filename)
+{
+    ifstream file(filename);
+    if (!file)
+    {
+        cerr << "Error: Unable to open file " << filename << endl;
+        exit(1);
+    }
+
+    string line;
+    while (getline(file, line))
+    {
+        if (!line.empty())
+        {
+            char name[20]; // Adjusted size to accommodate longer names
+            int attack, health;
+            sscanf(line.c_str(), "%[^:]: %d %d", name, &attack, &health);
+            names.push_back(name);
+            atks.push_back(attack);
+            hps.push_back(health);
+        }
+    }
+
+    file.close();
+}
+
+void Random::dealCards(Player &player, int index)
+{
+    srand(time(0));
+    bool dealphase = true;
+    if (player.slots[index].hp <= 0) // Check if the slot is empty
+    {
+        int cardIndex = rand() % names.size();                       // Choose a random card from the available ones
+        player.slots[index].create(atks[cardIndex], hps[cardIndex]); // Assign the chosen card to the slot
+    }
+    else
+    {
+        cout << "Slot " << (index + 1) << " is already occupied. You cannot add a card to this slot." << endl;
+        cout << "Where do you want to put the card (index 1-" << scale << "): ";
+        int index;
+        cin.ignore();
+        cin >> index;
+        dealCards(player, index - 1);
+    }
+}
+
+void display(Player left, Player right)
+{
+    cout << left.name << " vs " << right.name << endl;
+    for (int i = 0; i < scale; i++)
+    {
+        cout << "Slot " << setw(2) << (i + 1) << ": " << setw(10) << left.slots[i].txt << " - " << right.slots[i].txt << endl;
+    }
+    cout << "HP: " << left.name << " = " << left.hp << ", " << right.name << " = " << right.hp << endl;
+}
 
 int main()
 {
     string filename = "Namecard.txt";
-    Deck imported("Namecard.txt");
+    Random random;
+    random.importCard(filename);
 
-    int turn = 1; 
-    Player p1("P1", 10, imported), p2("P2", 10, imported);
-    while(true){ 
-        cout << "<<< Turn " << turn << " >>>\n";
+    Player p1, p2;
+    p1.name = "Player 1";
+    p2.name = "Player 2";
+
+    int turn = 1;
+    while (!p1.isDead() && !p2.isDead()) // Continue the loop until one of the players is dead
+    {
+        cout << "Turn " << turn << endl;
         display(p1, p2);
-        action(p1, imported);
+        GetEnter();
+
+        system("cls");
+        display(p1, p2);
+
+        p1.action(random, turn);
+        GetEnter();
+        system("cls");
 
         display(p1, p2);
-        action(p2, imported);
-        
+        p2.action(random, turn);
+        system("cls");
+
         display(p1, p2);
-        combat(p1, p2);
-        cout << "\n";
-        /////////////////////////////////////////////////////////////////////////
-        if(p1.hp <= 0 || p2.hp <= 0) break;
-        
+        cin.ignore();
+        GetEnter();
+        system("cls");
+        cout << "Player combat:" << endl;
+        p1.attack(p2);
+
+        display(p1, p2);
+
+        // Update player HP based on slot status
+
+        // cout << "Player 1 HP: " << p1.hp << endl;
+        // cout << "Player 2 HP: " << p2.hp << endl;
+        GetEnter();
+        system("cls");
         turn++;
     }
-    if(p1.hp == p2.hp) win("Both");
-    else if(p1.isDead()) win(" P1 ");
-    else Win(" P2 ");
-    //////////////////////////////////////// ของเวสป้าถึงตรงนี้ ///////////////////////////////
+
+    // Determine the winner
+    cout << "Game Over!" << endl;
+    if (p1.isDead() && p2.isDead())
+    {
+        cout << "It's a tie!" << endl;
+    }
+    else if (p1.isDead())
+    {
+        cout << p2.name << " wins!" << endl;
+    }
+    else
+    {
+        cout << p1.name << " wins!" << endl;
+    }
+
     return 0;
 }
 
-void manys(const wchar_t specialChar) {
-    for (int N=1; N<135; N++)
-    wcout << specialChar;
-}
-
-void many(const wchar_t specialChar) {
-    for (int N=1; N<9; N++)
-    wcout << specialChar;
-}
-
-void one(const wchar_t specialChar) {
-    wcout << specialChar;
-}
-
-void display(Player left, Player right){ 
-        // cout << name1.sum_name1[0] << "\n";
-        // cout << attack1.sum_atk1[0] << "\n";
-        // cout << health1.sum_hp1[0] << "\n";
-
-        // cout << name2.sum_name2[0] << "\n";
-        // cout << attack2.sum_atk2[0] << "\n";
-        // cout << health2.sum_hp2[0] << "\n";
-
-    HANDLE Color = GetStdHandle(STD_OUTPUT_HANDLE);
-    SetConsoleTextAttribute(Color,5);
-    cout << "Check" << endl;
-
-
-    wchar_t F = L'\u00CF'; // ใช้รหัส Unicode
-    wchar_t G = L'\u00D1';
-    wchar_t A = L'\u00C9';
-    wchar_t B = L'\u00BB';
-    wchar_t C = L'\u00C8';
-    wchar_t D = L'\u00BC';
-    wchar_t E = L'\u00ED';
-    wchar_t I = L'\u00DF';
-    wchar_t ATK = L'\u0041';
-    wchar_t HP = L'\u2665';
-    
-    // one(A);
-    // many(F);
-    // one(B);
-    // cout << "\n\n\n\n";
-    // one(C);
-    // many(G);
-    // one(D);
-    // one(HP);
-    
-    cout << endl;
-    manys(I);
-    cout << endl;
-    
-    SetConsoleTextAttribute(Color,14);
-    // cout << "====================================================================================================================================\n";
-    for(int i=0; i<scale; i++){
-        // cout << "|    " << left.slots[i].txt << "     <->     " << right.slots[i].txt << "    |\n"; // วนแสดง unit ที่อยู่ในแต่ละช่อง
-        // cout << name1.sum_name[i]<< endl;
-        // cout << attack1.sum_atk[i]<<endl;
-        // cout << health1.sum_hp[i]<<endl;
-        
-        string N1 = " ";
-        string A1 = " ";
-        string H1 = " ";
-        
-        if(left.slots[i] != NULL){
-            N1 = left.slots[i].name;
-            A1 = to_string(left.slots[i].atk);
-            H1 = to_string(left.slots[i].hp);
-        }
-        
-        string N2 = " ";
-        string A2 = " ";
-        string H2 = " ";
-        
-        if(right.slots[i] != NULL){
-            N2 = right.slots[i].name;
-            A2 = to_string(right.slots[i].atk);
-            H2 = to_string(right.slots[i].hp);
-        }
-        
-        cout << "          ";
-        cout <<             " ____________" << "                                                                                        " << "____________";
-        cout << "\n          |";
-        one(E);
-        cout << N1;
-        one(E);     
-        cout << "|" << "                                                                                      " << "|";
-        one(E);
-        cout << N2;
-        one(E);
-        cout << "|";
-        cout << "\n          | ";
-        one(A);
-        many(F);
-        one(B);
-        cout << " |" << "                                                                                      " << "| ";
-        one(A);
-        many(F);
-        one(B);
-        cout << " |";
-        cout << "\n          |   -<" << A1 <<  ">-    |" << "                                                                                      " << "|   -<" << A2 <<  ">-    |";
-        cout << "\n          |   -<" << H1 <<  ">-    |" << "                                                                                      " << "|   -<" << H2 <<  ">-    |";
-        cout << "\n          | ";
-        one(C);
-        many(G);
-        one(D);
-        cout << " |" << "                                                                                      " << "| ";
-        one(C);
-        many(G);
-        one(D);
-        cout << " |";
-        cout << "\n          |____________|" << "                                                                                      " << "|____________|\n";
-    }
-    cout << endl;
-    SetConsoleTextAttribute(Color,5);
-    manys(I);
-    cout << endl;
-    // cout << "_________________________________\n";
-    cout << "|    " << left.name << "<" << left.hp << ">                                                                                                               " << right.name << "<" << right.hp << ">   |\n"; // บรรทัดสำหรับแสดงค่า hp
-    cout << "======================================================================================================================================\n";
-}
-
-string toUpperStr(string x){
-    string y = x;
-    for(unsigned i = 0; i < x.size();i++) y[i] = toupper(x[i]);
-    return y;
-}
-///////////////////////////////////////////ของฟิว//////New create/////////////////////////////
-void action(Player &currP, Deck pile){
-    string input;
-    char format[] = "%d";
-    int slot=0;
-    
-    cout << "[" << currP.name << "]: ";
-    cin >> input;
-
-     // if(turn == 1){
-    //     two.importcard(filename,2);
-    // }
-    // else{
-    //     one.importcard(filename,1);
-    // }
-    
-    if(toUpperStr(input) == "SKIP") return;
-    
-    else if(toUpperStr(input) == "ADD"){
-        cout << "[?] Which slots?(1-" << scale << "): ";
-        cin >> input;
-
-        if(input.empty() || cin.bad()){
-            cout << "[!] Specify the slots, Please check your command.\n";
-            action(currP, pile);
-        }
-        else if(slot > scale || slot < 1){
-            cout << "[!] There are only " << scale << " slots. Please check your command.\n";
-            action(currP, pile);
-        }
-        else{
-            currP.slots[slot-1] = imported.random();
-        }
-    }
-    
-    else if(toUpperStr(input) == "END"){
-        cout << "[i] Game ended by user.";
-        exit(0);
-    }
-    
-    else{
-        cout << "[!] Invalid command. Write \"add\" to create a unit, \"skip\" to skip or \"End\" to to end the game.\n"; // สำหรับถ้าพิมพ์คำสั่งมาผิด
-        action(currP, pile);
-    }
-    cout << "\n";
-}
-///////////////////////////////////////////////ของฟิวถึงนี่//////////////////////////////////////////////////
-// สั่งให้ unit ทุกช่องสู้กัน
-void combat(Player &first, Player &second){
-    for(int i=0; i<scale; i++){
-        first.attack(second, i);
-        second.attack(first, i);
-    }
-}
-
-////////////////////////////////// ของเวสป้า ///////////////////////////
-
-void win(string display){
-    cout << endl;
-    HANDLE Color = GetStdHandle(STD_OUTPUT_HANDLE);
-    SetConsoleTextAttribute(Color,5);
-    cout<<"======================================================================================================================================";
-    cout << endl;
-    SetConsoleTextAttribute(Color,14);
-    cout<<"||                                                                                                                                  ||"<<endl;
-    cout<<"||                                                      !!! " << display << " win !!!!                                                           ||"<<endl;
-    cout<<"||                                                                                                                                  ||"<<endl;
-    SetConsoleTextAttribute(Color,5);
-    cout<<"======================================================================================================================================";
-    cout << endl;
+void GetEnter()
+{
+    cout << "Press Enter to continue" << endl;
+    cin.get();
 }
