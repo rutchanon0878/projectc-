@@ -3,36 +3,79 @@
 #include <windows.h>
 using namespace std;
 
+void returnback() {
+    cout << "Choose your input:\n";
+    cout << "(1) Play , (2) Introduction , (3) How to play , (0) Exit \n";
+}
+
+void playGame() {
+    cout << "Play\n";
+    // Add your game logic here
+}
+
+void displayIntroduction() {
+    cout << "In the realm of a dark and ominous card game filled with sin and hidden secrets, two castles stand side by side, imposing and grand. \nIt's an endless battle between the aspirations of the forlorn rulers and the power of darkness spreading its enchantment across the mesmerizing lands of the 7 Sins card game!\n";
+    // Add the rest of the introduction
+}
+
+void displayHowToPlay() {
+    cout << "1. Card Field: \n"<< "     -There are a total of 4 card fields available in each turn.\n";
+    cout << "2.Adding Characters: \n" << "     -In the first turn, you can add 2 characters to the field.\n" << "     -After that, you can add one character to the field per turn.\n";
+    cout << "3.Randomizing atk and hp values:\n" << "     -When you add a character to the field, the system will randomize the atk (attack) and hp (health) values for each character.\n";
+    cout << "4.Attacking:\n" << "     -Every character will attack the opposing field each turn.\n";
+    cout << "Adding Characters in the Next Turn:\n" << "     -In every subsequent turn, you can add one character to the field. (you can have a maximum of 3 cards on the field)\n";
+
+
+
+    // Add the rest of the instructions
+}
+
 int main() {
-    char userInput;
-    system("Color 0"); //ยังไม่ได้แก้ตกแต่งหรือใส่สี
+    system("Color 0");
     cout << "Welcome to 7 sins\n";
     cout << "The world of darkness and sin!\n";
-    cout << "Enter 'P' for Play \n";
-    cout << "Enter 'I' for Introduction \n";
-    cout << "Enter 'H' for How to play \n";
-    cout << "Press here : ";
-    cin >> userInput ;
-    if (userInput == 'P' || userInput == 'p') {
-        cout << "Play";
-        // P play เพื่อคำสั่งเข้าไปในฟั่งชั่นเพื่อเริ่มเกม
-    return 0; 
-    }
-    else if (userInput == 'I' || userInput == 'i') {
-        // I intro , เกริ่นนำ
-        cout << "In the realm of a dark and ominous card game filled with sin and hidden secrets, two castles stand side by side, imposing and grand. \nIt's an endless battle between the aspirations of the forlorn rulers and the power of darkness spreading its enchantment across the mesmerizing lands of the 7 Sins card game!\n";
-        cout << "In this game, you take on the role of a castle controller, shrouded in the power of darkness. You must guide your team through the challenges and the captivating mysteries of the castles lost in fascination, \nready to face intense battles and conquer the unseen darkness.\n";
-        cout << "With the 7 character cards prepared for the battlefield, each card possesses unique powers and abilities gained from the battles within the castles. \nChallenge your adversaries and explore the paths of various sins in each thrilling round!\n";
-        cout << "Don't forget the field cards, playing a crucial role in crafting strategies and seizing control of the castles in the way you desire. \nWith diverse choices for players, all of these elements will lead you into the world of horror and suspense in the 7 Sins card game! \nGet ready to embrace the challenges and overcome the crises that await you in every round of this exciting card game!\n";
-    }else if (userInput == 'H' || userInput == 'h') {
-        // H , How to play เป็นการบอกวิธีเล่นแบบคร่าวๆ
-        cout << "This game is a turn-based combat where players can create powerful units with unique attack (atk) and health (hp) values in each round. \n";
-        cout << "Engage in thrilling battles as you strategically choose to attack, summon new units, or strategically skip a turn. \n";
-    }
-    else {
-        cout << "Thank you for using the service. Goodbye!\n";
-    }
+
+    int currentMenu = 0;
+
+    do {
+        if (currentMenu == 0) {
+            cout << "Choose your input:\n";
+            cout << "1. Play\n";
+            cout << "2. Introduction\n";
+            cout << "3. How to play\n";
+            cout << "0. Exit\n";
+        } else if (currentMenu == 1) {
+            playGame();
+            currentMenu = 0;
+            continue;
+        } else if (currentMenu == 2) {
+            system("cls");
+            displayIntroduction();
+            returnback();
+        } else if (currentMenu == 3) {
+            system("cls");
+            displayHowToPlay();
+            returnback();
+        }
+
+        cout << "Press here: ";
+        string userInput;
+        cin >> userInput;
+
+        if (userInput == "1") {
+            currentMenu = 1;
+        } else if (userInput == "2") {
+            currentMenu = 2;
+        } else if (userInput == "3") {
+            currentMenu = 3;
+        } else if (userInput == "0") {
+            cout << "Thank you for using the service. Goodbye!\n";
+            break;
+        } else {
+            cout << "Wrong input. Please try again.\n";
+        }
+
+    } while (true);
 
     return 0;
 }
-
