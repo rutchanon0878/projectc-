@@ -45,6 +45,7 @@ int main() {
             cout << "3. How to play\n";
             cout << "0. Exit\n";
         } else if (currentMenu == 1) {
+            system("cls");
             playGame();
             currentMenu = 0;
             continue;
