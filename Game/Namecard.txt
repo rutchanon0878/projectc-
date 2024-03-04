@@ -5,6 +5,6 @@
    Iras   : 4 4
  Invidias : 4 1
  Avaritia : 2 5
-   Hell   : 0 8
-  Heaven  : 0 8
-  Worlds  : 0 8
+   Hell   : 6 6
+  Heaven  : 7 5
+  Worlds  : 8 4

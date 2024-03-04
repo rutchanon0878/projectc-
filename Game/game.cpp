@@ -1,3 +1,4 @@
+#include "PROINTRO.h"
 #include <iostream>
 #include <fstream>
 #include <vector>
@@ -11,6 +12,13 @@ using namespace std;
 
 const int scale = 4;
 
+int turn = 1;
+
+void displayIntroduction();
+void displayHowToPlay();
+void returnback();
+void playGame();
+
 class Random;
 void GetEnter();
 
@@ -20,23 +28,34 @@ public:
     string namecard;
     int hp = 0;
     int atk = 0;
-    string txt = " (x) ";
+    // string txt = " (x) ";
+    string Nametxt = "          ";
+    string atktxt = " ";
+    string hptxt = " ";
 
     void txtUpdate();
-    void create(int, int);
+    void create(string, int, int);
     void damaged(int);
 };
 
 void Unit::txtUpdate()
 {
-    if (hp > 0)
-        txt = "[" + to_string(atk) + "/" + to_string(hp) + "]";
-    else
-        txt = " (x) ";
+    if (hp > 0){
+        Nametxt = namecard;
+        atktxt = ""+ to_string(atk) +"";
+        hptxt = ""+ to_string(hp) +"";
+        // txt = "[" + to_string(atk) + "/" + to_string(hp) + "]";
+    }
+    else{
+        Nametxt = "          ";
+        atktxt = " ";
+        hptxt = " ";
+    }
 }
 
-void Unit::create(int attack, int health)
-{
+void Unit::create(string names,int attack, int health)
+{   
+    namecard = names;
     atk = attack;
     hp = health;
     txtUpdate();
@@ -52,7 +71,7 @@ void Unit::damaged(int amount)
 class Player
 {
 public:
-    int hp = 10;
+    int hp = 20;
     string name;
     Unit slots[scale];
 
@@ -78,40 +97,47 @@ void Player::action(Random &random, int turn)
 {
     bool action = true;
     string input;
-    int cardsToAdd = (turn == 1) ? 2 : 1; // Adjust cards to add based on turn number
-    int addCount = 0;                     // Track the number of times "add" action is used
+    int cardsToAdd = (turn == 1) ? 4 : 2;
+    int addCount = 0;
+
     while (action)
     {
         cout << "[" << name << "]: ";
         cout << " Your Action : ";
         cin >> input;
-        // แปลง input เป็นตัวพิมพ์เล็กทั้งหมด
         transform(input.begin(), input.end(), input.begin(), ::tolower);
+
         if (input == "add")
         {
-            if (cardsToAdd > 0 && addCount < 2) // Allow "add" action only if cardsToAdd > 0 and addCount < 2
+            if (cardsToAdd > 0 && addCount < 100000000000000)
             {
-                int index;
+                int indexValue;
                 cout << "Where do you want to put the card (index 1-" << scale << "): ";
-                cin >> index;
-                if (index >= 1 && index <= scale)
-                {
 
-                    random.dealCards(*this, index - 1); // Deal card to the specified slot
-
-                    cardsToAdd--;
-                    addCount++;
-                }
-                else
+                // Check if input is not an integer
+                while (!(cin >> indexValue) || indexValue < 1  || indexValue > scale)
                 {
-                    cout << "Invalid slot index. Please choose a slot index between 1 and " << scale << "." << endl;
+                    cout << "Invalid input. Please enter a valid slot index between 1 and " << scale << ": ";
+                    cin.clear();  // Clear the error flag
+                    cin.ignore(numeric_limits<streamsize>::max(), '\n');  // Discard invalid input
                 }
+
+                random.dealCards(*this, indexValue - 1);
+                cardsToAdd--;
+                addCount++;
             }
             else
             {
                 cout << "You can't add more cards this turn!" << endl;
                 continue;
             }
+        }
+        else if (input == "end")
+        {
+            cout << "Ending the game." << endl;
+            // Add any necessary game-ending logic here (e.g., displaying final scores)
+            action = false;
+            exit(0); // This will exit the loop and end the game in a controlled manner
         }
         else if (input == "skip")
         {
@@ -120,11 +146,12 @@ void Player::action(Random &random, int turn)
         }
         else
         {
-            cout << "Invalid action! Please choose 'add' or 'skip'." << endl;
+            cout << "Invalid action! Please choose 'add', 'end', or 'skip'." << endl;
             cin.ignore();
             continue;
         }
     }
+    // Additional cleanup or post-game logic can be added here
 }
 
 void Player::attack(Player &target)
@@ -159,11 +186,6 @@ void Player::attack(Player &target)
     }
 }
 
-// bool Player::isDead()
-// {
-//     return hp <= 0;
-// }
-
 void Random::importCard(const string filename)
 {
     ifstream file(filename);
@@ -194,19 +216,34 @@ void Random::dealCards(Player &player, int index)
 {
     srand(time(0));
     bool dealphase = true;
+
+    if (index < 0 || index >= scale)
+    {
+        cout << "Invalid slot index. Please choose a slot index between 1 and " << scale << "." << endl;
+        return;
+    }
+
     if (player.slots[index].hp <= 0) // Check if the slot is empty
     {
         int cardIndex = rand() % names.size();                       // Choose a random card from the available ones
-        player.slots[index].create(atks[cardIndex], hps[cardIndex]); // Assign the chosen card to the slot
+        player.slots[index].create(names[cardIndex], atks[cardIndex], hps[cardIndex]); // Assign the chosen card to the slot
     }
     else
     {
         cout << "Slot " << (index + 1) << " is already occupied. You cannot add a card to this slot." << endl;
+
+        int newIndex;
         cout << "Where do you want to put the card (index 1-" << scale << "): ";
-        int index;
-        cin.ignore();
-        cin >> index;
-        dealCards(player, index - 1);
+
+        // Check if input is not an integer
+        if (!(cin >> newIndex) || newIndex < 1 || newIndex > scale)
+        {
+            cout << "Invalid input. Please enter a valid slot index between 1 and " << scale << ": ";
+            cin.clear();  // Clear the error flag
+            cin.ignore();  // Discard invalid input
+        }
+
+        dealCards(player, newIndex - 1);
     }
 }
 void manys(const wchar_t specialChar) {
@@ -226,7 +263,6 @@ void display(Player left, Player right){
     
     HANDLE Color = GetStdHandle(STD_OUTPUT_HANDLE);
         SetConsoleTextAttribute(Color,14);
-    cout << "Check" << endl;
     wchar_t F = L'\u00CF'; // ใช้รหัส Unicode
     wchar_t G = L'\u00D1';
     wchar_t A = L'\u00C9';
@@ -237,14 +273,53 @@ void display(Player left, Player right){
     wchar_t I = L'\u00DF';
     wchar_t ATK = L'\u0041';
     wchar_t HP = L'\u2665';
-    cout << left.name << " vs " << right.name << endl;
-    for (int i = 0; i < scale; i++)
-    {
-        cout << "Slot " << setw(2) << (i + 1) << ": " << setw(10) << left.slots[i].txt << " - " << right.slots[i].txt << endl;
+
+    manys(I);
+    cout << endl;
+    SetConsoleTextAttribute(Color,14);
+    cout << "Turn " << turn << endl;
+    cout << "=====================================================================================================================================\n";
+    for(int i=0; i<scale; i++){
+        cout << "          ";
+        cout <<             " ____________" << "                                                                                        " << "____________";
+        cout << "\n          |";
+        one(E);
+        cout << left.slots[i].Nametxt;
+        one(E);     
+        cout << "|" << "                                                                                      " << "|";
+        one(E);
+        cout << right.slots[i].Nametxt;
+        one(E);
+        cout << "|";
+        cout << "\n          | ";
+        one(A);
+        many(F);
+        one(B);
+        cout << " |" << "                                                                                      " << "| ";
+        one(A);
+        many(F);
+        one(B);
+        cout << " |";
+        cout << "\n          |   -<" << left.slots[i].atktxt <<  ">-    |" << "                                                                                      " << "|   -<" << right.slots[i].atktxt <<  ">-    |";
+        cout << "\n          |   -<" << left.slots[i].hptxt <<  ">-    |" << "                                                                                      " << "|   -<" << right.slots[i].hptxt <<  ">-    |";
+        cout << "\n          | ";
+        one(C);
+        many(G);
+        one(D);
+        cout << " |" << "                                                                                      " << "| ";
+        one(C);
+        many(G);
+        one(D);
+        cout << " |";
+        cout << "\n          |____________|" << "                                                                                      " << "|____________|\n";
+
+
     }
+    cout << endl;
     SetConsoleTextAttribute(Color,5);
     manys(I);
-    cout << "\nHP: " << left.name << " = " << left.hp << ", " << right.name << " = " << right.hp << endl;
+    cout << endl;
+    cout << "|    " << left.name << "<" << left.hp << ">                                                                                                    " << right.name << "<" << right.hp << ">    |\n"; // บรรทัดสำหรับแสดงค่า hp
     cout << "======================================================================================================================================\n";
 }
 bool Player::isDead(){
@@ -298,6 +373,63 @@ void bothwin(){
 }
 int main()
 {
+    system("Color 0");
+    cout << "Welcome to 7 sins\n";
+    cout << "The world of darkness and sin!\n";
+
+    int currentMenu = 0;
+
+    do {
+        if (currentMenu == 0) {
+            cout << "Choose your input:\n";
+            cout << "1. Play\n";
+            cout << "2. Introduction\n";
+            cout << "3. How to play\n";
+            cout << "0. Exit\n";
+        } else if (currentMenu == 1) {
+            system("cls");
+            playGame();
+            currentMenu = 0;
+            continue;
+        } else if (currentMenu == 2) {
+            system("cls");
+            displayIntroduction();
+            returnback();
+        } else if (currentMenu == 3) {
+            system("cls");
+            displayHowToPlay();
+            returnback();
+        }
+
+        cout << "Press here: ";
+        string userInput;
+        cin >> userInput;
+
+        if (userInput == "1") {
+            currentMenu = 1;
+        } else if (userInput == "2") {
+            currentMenu = 2;
+        } else if (userInput == "3") {
+            currentMenu = 3;
+        } else if (userInput == "0") {
+            cout << "Thank you for using the service. Goodbye!\n";
+            break;
+        } else {
+            cout << "Wrong input. Please try again.\n";
+        }
+
+    } while (true);
+    return 0;
+
+}
+   
+void GetEnter()
+{
+    cout << "Press Enter to continue" << endl;
+    cin.get();
+}
+
+void playGame(){
     string filename = "Namecard.txt";
     Random random;
     random.importCard(filename);
@@ -306,13 +438,14 @@ int main()
     p1.name = "Player 1";
     p2.name = "Player 2";
 
-    int turn = 1;
     while (!p1.isDead() && !p2.isDead()) // Continue the loop until one of the players is dead
     {
-        cout << "Turn " << turn << endl;
+        
         display(p1, p2);
         GetEnter();
 
+        cout << endl;
+        
         system("cls");
         display(p1, p2);
 
@@ -333,39 +466,13 @@ int main()
 
         display(p1, p2);
 
-        // Update player HP based on slot status
-
-        // cout << "Player 1 HP: " << p1.hp << endl;
-        // cout << "Player 2 HP: " << p2.hp << endl;
         GetEnter();
         system("cls");
         if(p1.hp <= 0 || p2.hp <= 0) break;
         turn++;
     }
-     if(p1.hp == p2.hp) bothwin();
-    else if(p1.isDead()) p2Win();
-    else p1Win();
-
-    // Determine the winner
-    // cout << "Game Over!" << endl;
-    // if (p1.isDead() && p2.isDead())
-    // {
-    //     cout << "It's a tie!" << endl;
-    // }
-    // else if (p1.isDead())
-    // {
-    //     cout << p2.name << " wins!" << endl;
-    // }
-    // else
-    // {
-    //     cout << p1.name << " wins!" << endl;
-    // }
-
-    return 0;
-}
-
-void GetEnter()
-{
-    cout << "Press Enter to continue" << endl;
-    cin.get();
+    if(p1.hp > p2.hp) p1Win();
+    if(p1.hp < p2.hp) p2Win();
+    if(p1.hp == p2.hp) bothwin();
+   
 }
