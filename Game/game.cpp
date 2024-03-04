@@ -5,6 +5,7 @@
 #include <ctime>
 #include <iomanip>
 #include <algorithm> // เพิ่มไฟล์ header นี้
+#include<windows.h>
 
 using namespace std;
 
@@ -16,6 +17,7 @@ void GetEnter();
 class Unit
 {
 public:
+    string namecard;
     int hp = 0;
     int atk = 0;
     string txt = " (x) ";
@@ -157,10 +159,10 @@ void Player::attack(Player &target)
     }
 }
 
-bool Player::isDead()
-{
-    return hp <= 0;
-}
+// bool Player::isDead()
+// {
+//     return hp <= 0;
+// }
 
 void Random::importCard(const string filename)
 {
@@ -207,17 +209,93 @@ void Random::dealCards(Player &player, int index)
         dealCards(player, index - 1);
     }
 }
+void manys(const wchar_t specialChar) {
+    for (int N=1; N<135; N++)
+    wcout << specialChar;
+}
 
-void display(Player left, Player right)
-{
+void many(const wchar_t specialChar) {
+    for (int N=1; N<9; N++)
+    wcout << specialChar;
+}
+
+void one(const wchar_t specialChar) {
+    wcout << specialChar;
+}
+void display(Player left, Player right){ 
+    
+    HANDLE Color = GetStdHandle(STD_OUTPUT_HANDLE);
+        SetConsoleTextAttribute(Color,14);
+    cout << "Check" << endl;
+    wchar_t F = L'\u00CF'; // ใช้รหัส Unicode
+    wchar_t G = L'\u00D1';
+    wchar_t A = L'\u00C9';
+    wchar_t B = L'\u00BB';
+    wchar_t C = L'\u00C8';
+    wchar_t D = L'\u00BC';
+    wchar_t E = L'\u00ED';
+    wchar_t I = L'\u00DF';
+    wchar_t ATK = L'\u0041';
+    wchar_t HP = L'\u2665';
     cout << left.name << " vs " << right.name << endl;
     for (int i = 0; i < scale; i++)
     {
         cout << "Slot " << setw(2) << (i + 1) << ": " << setw(10) << left.slots[i].txt << " - " << right.slots[i].txt << endl;
     }
-    cout << "HP: " << left.name << " = " << left.hp << ", " << right.name << " = " << right.hp << endl;
+    SetConsoleTextAttribute(Color,5);
+    manys(I);
+    cout << "\nHP: " << left.name << " = " << left.hp << ", " << right.name << " = " << right.hp << endl;
+    cout << "======================================================================================================================================\n";
+}
+bool Player::isDead(){
+    if(hp <= 0) return true;
+    else false;
 }
 
+void p1Win(){
+    cout << endl;
+    HANDLE Color = GetStdHandle(STD_OUTPUT_HANDLE);
+    SetConsoleTextAttribute(Color,5);
+    cout<<"======================================================================================================================================";
+    cout << endl;
+    SetConsoleTextAttribute(Color,14);
+    cout<<"||                                                                                                                                  ||"<<endl;
+    cout<<"||                                                       !!! P1 win !!!!                                                            ||"<<endl;
+    cout<<"||                                                                                                                                  ||"<<endl;
+    SetConsoleTextAttribute(Color,5);
+    cout<<"======================================================================================================================================";
+    cout << endl;
+}
+
+void p2Win(){
+    cout << endl;
+    HANDLE Color = GetStdHandle(STD_OUTPUT_HANDLE);
+    SetConsoleTextAttribute(Color,5);
+    cout<<"======================================================================================================================================";
+    cout << endl;
+    SetConsoleTextAttribute(Color,14);
+    cout<<"||                                                                                                                                  ||"<<endl;
+    cout<<"||                                                       !!! P2 win !!!!                                                            ||"<<endl;
+    cout<<"||                                                                                                                                  ||"<<endl;
+    SetConsoleTextAttribute(Color,5);
+    cout<<"======================================================================================================================================";
+    cout << endl;
+}
+
+void bothwin(){
+    cout << endl;
+    HANDLE Color = GetStdHandle(STD_OUTPUT_HANDLE);
+    SetConsoleTextAttribute(Color,5);
+    cout<<"======================================================================================================================================";
+    cout << endl;
+    SetConsoleTextAttribute(Color,14);
+    cout<<"||                                                                                                                                  ||"<<endl;
+    cout<<"||                                                      !!! Both win !!!!                                                           ||"<<endl;
+    cout<<"||                                                                                                                                  ||"<<endl;
+    SetConsoleTextAttribute(Color,5);
+    cout<<"======================================================================================================================================";
+    cout << endl;
+}
 int main()
 {
     string filename = "Namecard.txt";
@@ -261,23 +339,27 @@ int main()
         // cout << "Player 2 HP: " << p2.hp << endl;
         GetEnter();
         system("cls");
+        if(p1.hp <= 0 || p2.hp <= 0) break;
         turn++;
     }
+     if(p1.hp == p2.hp) bothwin();
+    else if(p1.isDead()) p2Win();
+    else p1Win();
 
     // Determine the winner
-    cout << "Game Over!" << endl;
-    if (p1.isDead() && p2.isDead())
-    {
-        cout << "It's a tie!" << endl;
-    }
-    else if (p1.isDead())
-    {
-        cout << p2.name << " wins!" << endl;
-    }
-    else
-    {
-        cout << p1.name << " wins!" << endl;
-    }
+    // cout << "Game Over!" << endl;
+    // if (p1.isDead() && p2.isDead())
+    // {
+    //     cout << "It's a tie!" << endl;
+    // }
+    // else if (p1.isDead())
+    // {
+    //     cout << p2.name << " wins!" << endl;
+    // }
+    // else
+    // {
+    //     cout << p1.name << " wins!" << endl;
+    // }
 
     return 0;
 }
