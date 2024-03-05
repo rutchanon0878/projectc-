@@ -81,6 +81,12 @@ public:
     int getTotalHp(); // Calculate total HP of all slots
 };
 
+string toUpperStr(string x){
+    string y = x;
+    for(unsigned i = 0; i < x.size();i++) y[i] = toupper(x[i]);
+    return y;
+}
+
 class Random
 {
 private:
@@ -97,34 +103,44 @@ void Player::action(Random &random, int turn)
 {
     bool action = true;
     string input;
-    int cardsToAdd = (turn == 1) ? 4 : 2;
+    int cardsToAdd = (turn == 1) ? 3 : 2;
     int addCount = 0;
 
     while (action)
     {
+        
         cout << "[" << name << "]: ";
         cout << " Your Action : ";
         cin >> input;
-        transform(input.begin(), input.end(), input.begin(), ::tolower);
 
-        if (input == "add")
+        if (toUpperStr(input) == "ADD")
         {
-            if (cardsToAdd > 0 && addCount < 100000000000000)
+            if (cardsToAdd > 0 && addCount < 3)
             {
-                int indexValue;
+                string index;
                 cout << "Where do you want to put the card (index 1-" << scale << "): ";
+                cin >> index;
 
-                // Check if input is not an integer
-                while (!(cin >> indexValue) || indexValue < 1  || indexValue > scale)
+                try
                 {
-                    cout << "Invalid input. Please enter a valid slot index between 1 and " << scale << ": ";
-                    cin.clear();  // Clear the error flag
-                    cin.ignore(numeric_limits<streamsize>::max(), '\n');  // Discard invalid input
-                }
+                    int indexValue = stoi(index);
 
-                random.dealCards(*this, indexValue - 1);
-                cardsToAdd--;
-                addCount++;
+                    if (indexValue >= 1 && indexValue <= scale)
+                    {
+                        random.dealCards(*this, indexValue - 1);
+                        cardsToAdd--;
+                        addCount++;
+                    }
+                    else
+                    {
+                        cout << "Invalid slot index. Please choose a slot index between 1 and " << scale << "." << endl;
+                    }
+                }
+                catch (std::invalid_argument)
+                {
+                    cout << "Invalid input. Please enter a valid number." << endl;
+                    // You might want to add additional error handling or re-prompt the user here
+                }
             }
             else
             {
@@ -132,27 +148,27 @@ void Player::action(Random &random, int turn)
                 continue;
             }
         }
-        else if (input == "end")
+        else if (toUpperStr(input) == "END")
         {
             cout << "Ending the game." << endl;
             // Add any necessary game-ending logic here (e.g., displaying final scores)
-            action = false;
-            exit(0); // This will exit the loop and end the game in a controlled manner
+            action = false; // This will exit the loop and end the game in a controlled manner
         }
-        else if (input == "skip")
+        else if (toUpperStr(input) == "SKIP")
         {
             action = false;
             cout << "Skipping turn for " << name << endl;
         }
         else
         {
-            cout << "Invalid action! Please choose 'add', 'end', or 'skip'." << endl;
+            cout << "Invalid action! Please choose 'ADD', 'END', or 'SKIP'." << endl;
             cin.ignore();
             continue;
         }
     }
     // Additional cleanup or post-game logic can be added here
 }
+
 
 void Player::attack(Player &target)
 {
@@ -217,48 +233,50 @@ void Random::dealCards(Player &player, int index)
     srand(time(0));
     bool dealphase = true;
 
-    if (index < 0 || index >= scale)
+    while (true)
     {
-        cout << "Invalid slot index. Please choose a slot index between 1 and " << scale << "." << endl;
-        return;
-    }
-
-    if (player.slots[index].hp <= 0) // Check if the slot is empty
-    {
-        int cardIndex = rand() % names.size();                       // Choose a random card from the available ones
-        player.slots[index].create(names[cardIndex], atks[cardIndex], hps[cardIndex]); // Assign the chosen card to the slot
-    }
-    else
-    {
-        cout << "Slot " << (index + 1) << " is already occupied. You cannot add a card to this slot." << endl;
-
-        int newIndex;
-        cout << "Where do you want to put the card (index 1-" << scale << "): ";
-
-        // Check if input is not an integer
-        if (!(cin >> newIndex) || newIndex < 1 || newIndex > scale)
+        if (player.slots[index].hp <= 0) // Check if the slot is empty
         {
-            cout << "Invalid input. Please enter a valid slot index between 1 and " << scale << ": ";
-            cin.clear();  // Clear the error flag
-            cin.ignore();  // Discard invalid input
+            int cardIndex = rand() % names.size(); // Choose a random card from the available ones
+            player.slots[index].create(names[cardIndex], atks[cardIndex], hps[cardIndex]); // Assign the chosen card to the slot
+            break; // Break out of the loop when successful
         }
+        else
+        {
+            cout << "Slot " << (index + 1) << " is already occupied. You cannot add a card to this slot." << endl;
+            cout << "Where do you want to put the card (index 1-" << scale << "): ";
+            cin.ignore();
 
-        dealCards(player, newIndex - 1);
+            string newIndex;
+            cin >> newIndex;
+            int NewindexValue = stoi(newIndex);
+            // Check if input is not an integer
+            while (!(cin >> NewindexValue) || NewindexValue < 1 || NewindexValue > scale)
+            {
+                cout << "Invalid input. Please enter a valid slot index between 1 and " << scale << ": ";
+                cin.clear();  // Clear the error flag
+                cin.ignore(); // Discard invalid input
+            }
+
+            index = NewindexValue - 1;
+        }
     }
 }
-void manys(const wchar_t specialChar) {
+
+void manys(const wchar_t specialChar){
     for (int N=1; N<135; N++)
     wcout << specialChar;
 }
 
-void many(const wchar_t specialChar) {
+void many(const wchar_t specialChar){
     for (int N=1; N<9; N++)
     wcout << specialChar;
 }
 
-void one(const wchar_t specialChar) {
+void one(const wchar_t specialChar){
     wcout << specialChar;
 }
+
 void display(Player left, Player right){ 
     
     HANDLE Color = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -322,6 +340,7 @@ void display(Player left, Player right){
     cout << "|    " << left.name << "<" << left.hp << ">                                                                                                    " << right.name << "<" << right.hp << ">    |\n"; // บรรทัดสำหรับแสดงค่า hp
     cout << "======================================================================================================================================\n";
 }
+
 bool Player::isDead(){
     if(hp <= 0) return true;
     else false;
@@ -371,6 +390,7 @@ void bothwin(){
     cout<<"======================================================================================================================================";
     cout << endl;
 }
+
 int main()
 {
     system("Color 0");
@@ -404,7 +424,7 @@ int main()
         cout << "Press here: ";
         string userInput;
         cin >> userInput;
-
+        system("Color 0");
         if (userInput == "1") {
             currentMenu = 1;
         } else if (userInput == "2") {
@@ -416,11 +436,11 @@ int main()
             break;
         } else {
             cout << "Wrong input. Please try again.\n";
+            system("cls");
         }
 
     } while (true);
     return 0;
-
 }
    
 void GetEnter()

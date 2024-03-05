@@ -1,2 +1,2 @@
 
-            currentMenu = 3;
+    string input;
