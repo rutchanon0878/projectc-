@@ -139,7 +139,6 @@ void Player::action(Random &random, int turn)
                 catch (std::invalid_argument)
                 {
                     cout << "Invalid input. Please enter a valid number." << endl;
-                    // You might want to add additional error handling or re-prompt the user here
                 }
             }
             else
@@ -168,7 +167,6 @@ void Player::action(Random &random, int turn)
     }
     // Additional cleanup or post-game logic can be added here
 }
-
 
 void Player::attack(Player &target)
 {
